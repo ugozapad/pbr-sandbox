@@ -8,5 +8,7 @@ file(GLOB RENDER_SRC
 )
 source_group("render" FILES ${RENDER_SRC})
 
-add_executable(pbr-sandbox ${APP_SRC} ${RENDER_SRC})
+add_executable(pbr-sandbox ${APP_SRC} ${RENDER_SRC} "${CMAKE_CURRENT_SOURCE_DIR}/render/glad/src/glad.c")
 target_include_directories(pbr-sandbox PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(pbr-sandbox PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/render/glad/include")
+target_link_libraries(pbr-sandbox glfw)
