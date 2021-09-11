@@ -1,4 +1,5 @@
 #include "render/renderdevice.h"
+#include "render/vertexbuffer.h"
 
 #include "glad/glad.h"
 
@@ -26,3 +27,13 @@ void RenderDevice::clear(uint32_t flag)
 	glClear(clear_flags);
 }
 
+VertexBuffer* RenderDevice::create_vertex_buffer(void* data, size_t size, BufferAccess access)
+{
+	return new VertexBuffer(data, size, access);
+}
+
+void RenderDevice::delete_vertex_buffer(VertexBuffer* buffer)
+{
+	if (buffer)
+		delete buffer;
+}
