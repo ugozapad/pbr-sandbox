@@ -1,6 +1,15 @@
 #include "app/app.h"
 #include "render/renderdevice.h"
+#include "render/vertexbuffer.h"
+
 #include "glad/glad.h"
+
+struct Scene
+{
+	VertexBuffer* m_vertex_buffer;
+};
+
+static Scene g_scene;
 
 void App::init()
 {
@@ -15,6 +24,18 @@ void App::init()
 	glfwMakeContextCurrent(m_window);
 
 	gladLoadGL();
+
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	float vertices[] = {
+		-0.5f, -0.5f, 0.0f,
+		0.5f, -0.5f, 0.0f,
+		0.0f,  0.5f, 0.0f
+	};
+
+	g_scene.m_vertex_buffer = RenderDevice::get_instance()->create_vertex_buffer(vertices, sizeof(vertices), BufferAccess::Static);
 }
 
 void App::shutdown()
