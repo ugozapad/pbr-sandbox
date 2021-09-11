@@ -1,9 +1,12 @@
 file(GLOB APP_SRC
 	"${CMAKE_CURRENT_SOURCE_DIR}/app/*.*"
 )
-
 source_group("app" FILES ${APP_SRC})
 
-add_executable(pbr-sandbox ${APP_SRC})
+file(GLOB RENDER_SRC
+	"${CMAKE_CURRENT_SOURCE_DIR}/render/*.*"
+)
+source_group("render" FILES ${RENDER_SRC})
 
+add_executable(pbr-sandbox ${APP_SRC} ${RENDER_SRC})
 target_include_directories(pbr-sandbox PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
