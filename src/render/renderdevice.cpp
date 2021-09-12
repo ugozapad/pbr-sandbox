@@ -3,6 +3,8 @@
 
 #include "glad/glad.h"
 
+#include <stdio.h>
+
 RenderDevice* RenderDevice::get_instance()
 {
 	static RenderDevice s_render_device;
@@ -25,6 +27,26 @@ void RenderDevice::clear(uint32_t flag)
 		clear_flags |= GL_STENCIL_BUFFER_BIT;
 
 	glClear(clear_flags);
+}
+
+void RenderDevice::draw_arrays(PrimMode mode, int first, size_t count)
+{
+	GLenum gl_mode;
+
+	switch (mode)
+	{
+	case PM_TRIANGLES:
+		gl_mode = GL_TRIANGLES;
+		break;
+	case PM_TRIANGLE_STRIP:
+		gl_mode = GL_TRIANGLE_STRIP;
+		break;
+	default:
+		printf("RenderDevice::draw_arrays: unknowed primitive mode\n");
+		break;
+	}
+
+	glDrawArrays(gl_mode, first, count);
 }
 
 VertexBuffer* RenderDevice::create_vertex_buffer(void* data, size_t size, BufferAccess access)

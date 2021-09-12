@@ -85,7 +85,7 @@ void App::run()
 
 		ShaderProgramManager::get_instance().set_shader_program(g_scene.m_shader_prog);
 
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		render_device->draw_arrays(PM_TRIANGLES, 0, 3);
 	}
 }
 

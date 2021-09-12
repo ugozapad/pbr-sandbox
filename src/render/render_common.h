@@ -25,6 +25,12 @@ enum class ImageFormat
 	FMT_RGBA16F,
 };
 
+enum PrimMode
+{
+	PM_TRIANGLES,
+	PM_TRIANGLE_STRIP,
+};
+
 struct RenderContext
 {
 	int width;

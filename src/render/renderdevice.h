@@ -19,6 +19,9 @@ public:
 	void clear_color(float r, float g, float b, float a);
 	void clear(uint32_t flag);
 
+	// drawing
+	void draw_arrays(PrimMode mode, int first, size_t count);
+
 	// buffer creation
 	VertexBuffer* create_vertex_buffer(void* data, size_t size, BufferAccess access);
 	void delete_vertex_buffer(VertexBuffer* buffer);
