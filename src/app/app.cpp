@@ -1,12 +1,33 @@
 #include "app/app.h"
 #include "render/renderdevice.h"
 #include "render/vertexbuffer.h"
+#include "render/shaderprogrammanager.h"
+#include "render/shaderprogram.h"
 
 #include "glad/glad.h"
 
 struct Scene
 {
 	VertexBuffer* m_vertex_buffer;
+	ShaderProgram* m_shader_prog;
+
+	void create()
+	{
+		float vertices[] = {
+			-0.5f, -0.5f, 0.0f,
+			0.5f, -0.5f, 0.0f,
+			0.0f,  0.5f, 0.0f
+		};
+
+		m_vertex_buffer = RenderDevice::get_instance()->create_vertex_buffer(vertices, sizeof(vertices), BufferAccess::Static);
+		m_shader_prog = ShaderProgramManager::get_instance().create_program("test", "data/test.vsh", "data/test.psh");
+	}
+
+	void destroy()
+	{
+		//ShaderProgramManager::get_instance().delete_program(m_shader_prog);
+		RenderDevice::get_instance()->delete_vertex_buffer(m_vertex_buffer);
+	}
 };
 
 static Scene g_scene;
@@ -25,21 +46,21 @@ void App::init()
 
 	gladLoadGL();
 
+	ShaderProgramManager::get_instance().init();
+
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-	float vertices[] = {
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-		0.0f,  0.5f, 0.0f
-	};
-
-	g_scene.m_vertex_buffer = RenderDevice::get_instance()->create_vertex_buffer(vertices, sizeof(vertices), BufferAccess::Static);
+	g_scene.create();
 }
 
 void App::shutdown()
 {
+	g_scene.destroy();
+
+	ShaderProgramManager::get_instance().shutdown();
+
 	glfwTerminate();
 }
 
@@ -57,6 +78,14 @@ void App::run()
 
 		render_device->clear_color(0.5f, 0.5f, 0.5f, 1.0f);
 		render_device->clear(RenderDevice::CLEAR_COLOR);
+
+		render_device->set_vertex_buffer(g_scene.m_vertex_buffer);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+
+		ShaderProgramManager::get_instance().set_shader_program(g_scene.m_shader_prog);
+
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
 }
 

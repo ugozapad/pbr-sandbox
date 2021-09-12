@@ -37,3 +37,11 @@ void RenderDevice::delete_vertex_buffer(VertexBuffer* buffer)
 	if (buffer)
 		delete buffer;
 }
+
+void RenderDevice::set_vertex_buffer(VertexBuffer* buffer)
+{
+	if (buffer)
+		glBindBuffer(GL_ARRAY_BUFFER, buffer->m_buffer);
+	else
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
