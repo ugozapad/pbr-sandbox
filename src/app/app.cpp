@@ -42,11 +42,11 @@ struct Scene
 		m_render_device->clear_color(0.5f, 0.5f, 0.5f, 1.0f);
 		m_render_device->clear(RenderDevice::CLEAR_COLOR);
 
-		m_render_device->set_vertex_buffer(g_scene.m_vertex_buffer);
+		m_render_device->set_vertex_buffer(m_vertex_buffer);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 
-		ShaderProgramManager::get_instance().set_shader_program(g_scene.m_shader_prog);
+		ShaderProgramManager::get_instance().set_shader_program(m_shader_prog);
 
 		m_render_device->draw_arrays(PM_TRIANGLES, 0, 3);
 	}
