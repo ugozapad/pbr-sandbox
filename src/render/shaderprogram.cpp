@@ -59,3 +59,38 @@ ShaderProgram::~ShaderProgram()
 {
 	glDeleteProgram(m_program);
 }
+
+void ShaderProgram::set_vector2(const char* uniform_name, const glm::vec2& vector)
+{
+	glUniform2fv(get_uniform_location(uniform_name), 1, glm::value_ptr(vector));
+}
+
+void ShaderProgram::set_vector3(const char* uniform_name, const glm::vec3& vector)
+{
+	glUniform3fv(get_uniform_location(uniform_name), 1, glm::value_ptr(vector));
+}
+
+void ShaderProgram::set_vector4(const char* uniform_name, const glm::vec4& vector)
+{
+	glUniform4fv(get_uniform_location(uniform_name), 1, glm::value_ptr(vector));
+}
+
+void ShaderProgram::set_matrix3(const char* uniform_name, const glm::mat3& matrix)
+{
+	glUniformMatrix3fv(get_uniform_location(uniform_name), 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+void ShaderProgram::set_matrix3x4(const char* uniform_name, const glm::mat4x3& matrix)
+{
+	glUniformMatrix3x4fv(get_uniform_location(uniform_name), 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+void ShaderProgram::set_matrix4(const char* uniform_name, const glm::mat4& matrix)
+{
+	glUniformMatrix4fv(get_uniform_location(uniform_name), 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
+uint32_t ShaderProgram::get_uniform_location(const char* uniform_name)
+{
+	return glGetUniformLocation(m_program, uniform_name);
+}
