@@ -10,23 +10,45 @@ struct Scene
 {
 	VertexBuffer* m_vertex_buffer;
 	ShaderProgram* m_shader_prog;
+	RenderDevice* m_render_device;
 
 	void create()
 	{
+		m_render_device = RenderDevice::get_instance();
+
 		float vertices[] = {
 			-0.5f, -0.5f, 0.0f,
 			0.5f, -0.5f, 0.0f,
 			0.0f,  0.5f, 0.0f
 		};
 
-		m_vertex_buffer = RenderDevice::get_instance()->create_vertex_buffer(vertices, sizeof(vertices), BufferAccess::Static);
+		m_vertex_buffer = m_render_device->create_vertex_buffer(vertices, sizeof(vertices), BufferAccess::Static);
 		m_shader_prog = ShaderProgramManager::get_instance().create_program("test", "data/test.vsh", "data/test.psh");
 	}
 
 	void destroy()
 	{
 		//ShaderProgramManager::get_instance().delete_program(m_shader_prog);
-		RenderDevice::get_instance()->delete_vertex_buffer(m_vertex_buffer);
+		m_render_device->delete_vertex_buffer(m_vertex_buffer);
+	}
+
+	void update(float dt)
+	{
+
+	}
+
+	void render()
+	{
+		m_render_device->clear_color(0.5f, 0.5f, 0.5f, 1.0f);
+		m_render_device->clear(RenderDevice::CLEAR_COLOR);
+
+		m_render_device->set_vertex_buffer(g_scene.m_vertex_buffer);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+
+		ShaderProgramManager::get_instance().set_shader_program(g_scene.m_shader_prog);
+
+		m_render_device->draw_arrays(PM_TRIANGLES, 0, 3);
 	}
 };
 
@@ -76,16 +98,7 @@ void App::run()
 		glfwSwapBuffers(m_window);
 		glfwPollEvents();
 
-		render_device->clear_color(0.5f, 0.5f, 0.5f, 1.0f);
-		render_device->clear(RenderDevice::CLEAR_COLOR);
-
-		render_device->set_vertex_buffer(g_scene.m_vertex_buffer);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
-
-		ShaderProgramManager::get_instance().set_shader_program(g_scene.m_shader_prog);
-
-		render_device->draw_arrays(PM_TRIANGLES, 0, 3);
+		g_scene.render();
 	}
 }
 
