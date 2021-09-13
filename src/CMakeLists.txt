@@ -12,4 +12,5 @@ add_executable(pbr-sandbox ${APP_SRC} ${RENDER_SRC} "${CMAKE_CURRENT_SOURCE_DIR}
 target_include_directories(pbr-sandbox PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_include_directories(pbr-sandbox PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/render/glad/include")
 target_include_directories(pbr-sandbox PRIVATE "${CMAKE_SOURCE_DIR}/libs/glm")
-target_link_libraries(pbr-sandbox glfw)
+target_include_directories(pbr-sandbox PRIVATE "${CMAKE_SOURCE_DIR}/libs/stb")
+target_link_libraries(pbr-sandbox glfw spdlog)

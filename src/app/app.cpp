@@ -6,6 +6,10 @@
 
 #include "glad/glad.h"
 
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/stdout_sinks.h>
+
 struct Scene
 {
 	VertexBuffer* m_vertex_buffer;
@@ -51,11 +55,16 @@ struct Scene
 		m_render_device->draw_arrays(PM_TRIANGLES, 0, 3);
 	}
 };
-
+	
 static Scene g_scene;
 
 void App::init()
 {
+	spdlog::logger* logger = spdlog::default_logger_raw();
+	logger->sinks().clear();
+	logger->sinks().push_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("engine_log.txt", true));
+	logger->sinks().push_back(std::make_shared<spdlog::sinks::stdout_sink_mt>());
+
 	glfwInit();
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

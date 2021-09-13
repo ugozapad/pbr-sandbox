@@ -2,6 +2,8 @@
 
 #include "glad/glad.h"
 
+#include <spdlog/spdlog.h>
+
 #include <fstream>
 #include <string>
 
@@ -9,7 +11,7 @@ GLuint create_shader(GLenum target, const char* filename)
 {
 	std::ifstream ifs(filename);
 	if (!ifs.is_open())
-		printf("create_shader: failed to open file %s\n", filename);
+		spdlog::error("create_shader: failed to open file {}", filename);
 
 	std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 	const char* contentCStr = content.c_str();
@@ -24,8 +26,10 @@ GLuint create_shader(GLenum target, const char* filename)
 	if (!success)
 	{
 		glGetShaderInfoLog(shader, 512, NULL, infoLog);
-		printf("create_shader: failed to compile shader %s\n%s\n", filename, infoLog);
+		spdlog::error("create_shader: failed to compile shader {}\n{}", filename, infoLog);
 	}
+
+	spdlog::info("created {} shader from file {}", (target == GL_VERTEX_SHADER) ? "vertex" : "fragment", filename);
 
 	return shader;
 }
@@ -51,7 +55,7 @@ ShaderProgram::ShaderProgram(const char* name, const char* vsfilename, const cha
 	if (!success)
 	{
 		glGetProgramInfoLog(m_program, 512, NULL, infoLog);
-		printf("ShaderProgram::ShaderProgram: failed to link program %s\n", infoLog);
+		spdlog::info("ShaderProgram::ShaderProgram: failed to link program {}", infoLog);
 	}
 }
 

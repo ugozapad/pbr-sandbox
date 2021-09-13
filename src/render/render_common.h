@@ -61,5 +61,6 @@ struct IGPUBuffer
 
 uint32_t get_buffer_access(BufferAccess access);
 uint32_t get_buffer_mapping(BufferMapping mapping);
+uint32_t get_gl_format(ImageFormat format);
 
 #endif // RENDER_COMMON_H
