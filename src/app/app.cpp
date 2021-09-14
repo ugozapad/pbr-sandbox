@@ -7,6 +7,7 @@
 #include "render/indexbuffer.h"
 #include "render/shaderprogrammanager.h"
 #include "render/shaderprogram.h"
+#include "render/scene.h"
 
 #include "glad/glad.h"
 
@@ -14,24 +15,19 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_sinks.h>
 
-#define TINYGLTF_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "tiny_gltf.h"
-
 struct AppPrivate
 {
 	VertexBuffer* m_vertex_buffer;
 	IndexBuffer* m_index_buffer;
 	ShaderProgram* m_shader_prog;
 	RenderDevice* m_render_device;
+	Scene* m_sponza_scene;
 
 	std::shared_ptr<Texture2D> m_texture;
 
 	Camera m_camera;
 
 	glm::mat4 m_proj;
-
-	tinygltf::Model m_sponza_model;
 
 	void create()
 	{
@@ -58,26 +54,13 @@ struct AppPrivate
 
 		m_texture = ResourceManager::get_instance().create_resource<Texture2D>("data/test.png");
 
-		// load scene
-		std::string err;
-		std::string warn;
-		tinygltf::TinyGLTF loader;
-		bool ret = loader.LoadASCIIFromFile(&m_sponza_model, &err, &warn, "data/sponza/glTF/Sponza.gltf");
-		if (!warn.empty()) {
-			spdlog::error("Warn: {}", warn);
-		}
-
-		if (!err.empty()) {
-			spdlog::error("Err: {}", err);
-		}
-
-		if (!ret) {
-			spdlog::error("Failed to parse glTF");
-		}
+		m_sponza_scene = Scene::create_from_file("data/sponza/glTF/Sponza.gltf");
 	}
 
 	void destroy()
 	{
+		delete m_sponza_scene;
+
 		m_texture.reset();
 
 		//ShaderProgramManager::get_instance().delete_program(m_shader_prog);
@@ -151,23 +134,18 @@ struct AppPrivate
 		ShaderProgramManager::get_instance().set_shader_program(m_shader_prog);
 
 		// set matrices
-		glm::mat4 world = glm::mat4(1.0f);
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 
 		glm::mat4 mvp = glm::identity<glm::mat4>();
-		mvp = m_proj * m_camera.get_view_matr() * world;
+		mvp = m_proj * m_camera.get_view_matr() * model;
 		m_shader_prog->set_matrix4("u_mvp", mvp);
 
 		m_render_device->draw_elements(PM_TRIANGLES, 6);
-
-		draw_model(m_sponza_model);
 	}
 
-	void draw_model(tinygltf::Model& model)
-	{
-
-	}
 };
-	
+
 static AppPrivate g_app_private;
 
 void App::init()

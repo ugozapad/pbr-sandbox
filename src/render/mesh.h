@@ -18,16 +18,16 @@ struct Vertex
 	glm::vec2 texcoord;
 };
 
-class Model
+class Mesh
 {
 public:
-	static Model* create_from_scene_node(aiMesh* mesh, const aiScene* scene);
+	static Mesh* create_from_scene_node(aiMesh* mesh, const aiScene* scene);
 
 private:
-	Model(const MaterialCreationInfo& info, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
+	Mesh(const MaterialCreationInfo& info, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
 
 public:
-	~Model();
+	~Mesh();
 
 	void render();
 

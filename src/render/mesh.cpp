@@ -1,9 +1,9 @@
-#include "render/model.h"
+#include "render/mesh.h"
 #include "render/renderdevice.h"
 #include "render/vertexbuffer.h"
 #include "render/indexbuffer.h"
 
-Model* Model::create_from_scene_node(aiMesh* mesh, const aiScene* scene)
+Mesh* Mesh::create_from_scene_node(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
@@ -52,10 +52,10 @@ Model* Model::create_from_scene_node(aiMesh* mesh, const aiScene* scene)
 	material->GetTexture(aiTextureType_NORMALS, 0, &normal_name);
 	material_info.m_normal_filename = strdup(normal_name.C_Str());
 
-	return new Model(material_info, vertices, indices);
+	return new Mesh(material_info, vertices, indices);
 }
 
-Model::Model(const MaterialCreationInfo& info, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
+Mesh::Mesh(const MaterialCreationInfo& info, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
 {
 	m_vb_count = vertices.size();
 	m_vb = RenderDevice::get_instance()->create_vertex_buffer((void*)vertices.data(), vertices.size() * sizeof(Vertex), BufferAccess::Static);
@@ -66,14 +66,14 @@ Model::Model(const MaterialCreationInfo& info, const std::vector<Vertex>& vertic
 	m_mat.init(info);
 }
 
-Model::~Model()
+Mesh::~Mesh()
 {
 	m_mat.release();
 	RenderDevice::get_instance()->delete_index_buffer(m_ib);
 	RenderDevice::get_instance()->delete_vertex_buffer(m_vb);
 }
 
-void Model::render()
+void Mesh::render()
 {
 
 }
