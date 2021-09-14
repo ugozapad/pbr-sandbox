@@ -1,5 +1,6 @@
 #include "render/renderdevice.h"
 #include "render/vertexbuffer.h"
+#include "render/indexbuffer.h"
 
 #include "glad/glad.h"
 
@@ -60,10 +61,29 @@ void RenderDevice::delete_vertex_buffer(VertexBuffer* buffer)
 		delete buffer;
 }
 
+IndexBuffer* RenderDevice::create_index_buffer(void* data, size_t size, BufferAccess access)
+{
+	return new IndexBuffer(data, size, access);
+}
+
+void RenderDevice::delete_index_buffer(IndexBuffer* buffer)
+{
+	if (buffer)
+		delete buffer;
+}
+
 void RenderDevice::set_vertex_buffer(VertexBuffer* buffer)
 {
 	if (buffer)
 		glBindBuffer(GL_ARRAY_BUFFER, buffer->m_buffer);
 	else
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void RenderDevice::set_index_buffer(IndexBuffer* buffer)
+{
+	if (buffer)
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->m_buffer);
+	else
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

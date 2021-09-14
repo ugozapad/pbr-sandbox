@@ -28,10 +28,8 @@ uint32_t get_buffer_mapping(BufferMapping mapping)
 
 VertexBuffer::VertexBuffer(void* data, size_t size, BufferAccess access)
 {
-	glGenBuffers(1, &m_buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-	glBufferData(GL_ARRAY_BUFFER, size, data, get_buffer_access(access));
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glCreateBuffers(1, &m_buffer);
+	glNamedBufferData(m_buffer, size, data, get_buffer_access(access));
 }
 
 VertexBuffer::~VertexBuffer()
@@ -41,16 +39,11 @@ VertexBuffer::~VertexBuffer()
 
 void* VertexBuffer::map(BufferMapping mapping)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-	void* ret = glMapBuffer(GL_ARRAY_BUFFER, get_buffer_mapping(mapping));
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+	void* ret = glMapNamedBuffer(m_buffer, get_buffer_mapping(mapping));
 	return ret;
 }
 
 void VertexBuffer::unmap()
 {
-	glBindBuffer(GL_ARRAY_BUFFER, m_buffer);
-	glUnmapBuffer(GL_ARRAY_BUFFER);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glUnmapNamedBuffer(m_buffer);
 }
