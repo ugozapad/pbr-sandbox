@@ -31,6 +31,8 @@ struct Scene
 
 	glm::mat4 m_proj;
 
+	tinygltf::Model m_sponza_model;
+
 	void create()
 	{
 		m_render_device = RenderDevice::get_instance();
@@ -55,6 +57,23 @@ struct Scene
 		m_shader_prog = ShaderProgramManager::get_instance().create_program("test", "data/test.vsh", "data/test.psh");
 
 		m_texture = ResourceManager::get_instance().create_resource<Texture2D>("data/test.png");
+
+		// load scene
+		std::string err;
+		std::string warn;
+		tinygltf::TinyGLTF loader;
+		bool ret = loader.LoadASCIIFromFile(&m_sponza_model, &err, &warn, "data/sponza/glTF/Sponza.gltf");
+		if (!warn.empty()) {
+			spdlog::error("Warn: {}", warn);
+		}
+
+		if (!err.empty()) {
+			spdlog::error("Err: {}", err);
+		}
+
+		if (!ret) {
+			spdlog::error("Failed to parse glTF");
+		}
 	}
 
 	void destroy()
@@ -139,6 +158,13 @@ struct Scene
 		m_shader_prog->set_matrix4("u_mvp", mvp);
 
 		m_render_device->draw_elements(PM_TRIANGLES, 6);
+
+		draw_model(m_sponza_model);
+	}
+
+	void draw_model(tinygltf::Model& model)
+	{
+
 	}
 };
 	
