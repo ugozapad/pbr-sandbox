@@ -1,6 +1,7 @@
 #include "app/app.h"
 #include "render/renderdevice.h"
 #include "render/vertexbuffer.h"
+#include "render/indexbuffer.h"
 #include "render/shaderprogrammanager.h"
 #include "render/shaderprogram.h"
 
@@ -13,6 +14,7 @@
 struct Scene
 {
 	VertexBuffer* m_vertex_buffer;
+	IndexBuffer* m_index_buffer;
 	ShaderProgram* m_shader_prog;
 	RenderDevice* m_render_device;
 
@@ -29,6 +31,14 @@ struct Scene
 		};
 
 		m_vertex_buffer = m_render_device->create_vertex_buffer(vertices, sizeof(vertices), BufferAccess::Static);
+
+		unsigned int indices[] = {
+			0, 1, 3, // first triangle
+			1, 2, 3  // second triangle
+		};
+
+		m_index_buffer = m_render_device->create_index_buffer(indices, sizeof(indices), BufferAccess::Static);
+
 		m_shader_prog = ShaderProgramManager::get_instance().create_program("test", "data/test.vsh", "data/test.psh");
 	}
 
@@ -62,9 +72,11 @@ struct Scene
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 		glEnableVertexAttribArray(2);
 
+		m_render_device->set_index_buffer(m_index_buffer);
+
 		ShaderProgramManager::get_instance().set_shader_program(m_shader_prog);
 
-		m_render_device->draw_arrays(PM_TRIANGLES, 0, 8);
+		m_render_device->draw_elements(PM_TRIANGLES, 6);
 	}
 };
 	

@@ -22,6 +22,7 @@ public:
 
 	// drawing
 	void draw_arrays(PrimMode mode, int first, size_t count);
+	void draw_elements(PrimMode mode, int count);
 
 	// buffer creation
 	VertexBuffer* create_vertex_buffer(void* data, size_t size, BufferAccess access);

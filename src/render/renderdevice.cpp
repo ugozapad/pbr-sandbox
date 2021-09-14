@@ -6,6 +6,8 @@
 
 #include <stdio.h>
 
+#include <spdlog/spdlog.h>
+
 RenderDevice* RenderDevice::get_instance()
 {
 	static RenderDevice s_render_device;
@@ -43,11 +45,31 @@ void RenderDevice::draw_arrays(PrimMode mode, int first, size_t count)
 		gl_mode = GL_TRIANGLE_STRIP;
 		break;
 	default:
-		printf("RenderDevice::draw_arrays: unknowed primitive mode\n");
+		spdlog::error("RenderDevice::draw_arrays: unknowed primitive mode");
 		break;
 	}
 
 	glDrawArrays(gl_mode, first, count);
+}
+
+void RenderDevice::draw_elements(PrimMode mode, int count)
+{
+	GLenum gl_mode;
+
+	switch (mode)
+	{
+	case PM_TRIANGLES:
+		gl_mode = GL_TRIANGLES;
+		break;
+	case PM_TRIANGLE_STRIP:
+		gl_mode = GL_TRIANGLE_STRIP;
+		break;
+	default:
+		spdlog::error("RenderDevice::draw_elements: unknowed primitive mode");
+		break;
+	}
+
+	glDrawElements(gl_mode, count, GL_UNSIGNED_INT, 0);
 }
 
 VertexBuffer* RenderDevice::create_vertex_buffer(void* data, size_t size, BufferAccess access)
