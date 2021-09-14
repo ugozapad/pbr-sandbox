@@ -64,7 +64,7 @@ struct Scene
 
 		ShaderProgramManager::get_instance().set_shader_program(m_shader_prog);
 
-		m_render_device->draw_arrays(PM_TRIANGLES, 0, 6);
+		m_render_device->draw_arrays(PM_TRIANGLES, 0, 8);
 	}
 };
 	

@@ -3,15 +3,21 @@
 
 #include "render_common.h"
 
+class RenderDevice;
+
 class IndexBuffer : public IGPUBuffer
 {
-public:
-	IndexBuffer();
+	friend class RenderDevice;
+private:
+	IndexBuffer(void* data, size_t size, BufferAccess access);
 	~IndexBuffer();
 
-	void bind();
-private:
+public:
+	void* map(BufferMapping mapping) override;
+	void  unmap() override;
 
+private:
+	uint32_t m_buffer;
 };
 
 #endif // INDEX_BUFFER_H
