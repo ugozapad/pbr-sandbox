@@ -39,7 +39,9 @@ void Texture2D::init_from_memory(void* data, int width, int height, ImageFormat 
 	glTextureParameteri(m_texture_handle, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTextureParameteri(m_texture_handle, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	glTextureStorage2D(m_texture_handle, 1, get_gl_format(format), width, height);
+	glTextureStorage2D(m_texture_handle, 1, GL_RGBA8, width, height);
+	glTextureSubImage2D(m_texture_handle, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
 	glGenerateTextureMipmap(m_texture_handle);
 }
 

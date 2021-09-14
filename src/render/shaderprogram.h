@@ -11,6 +11,8 @@ private:
 	ShaderProgram(const char* name, const char* vsfilename, const char* fsfilename);
 	~ShaderProgram();
 public:
+	void set_texture_sampler(int slot, const char* name);
+
 	void set_vector2(const char* uniform_name, const glm::vec2& vector);
 	void set_vector3(const char* uniform_name, const glm::vec3& vector);
 	void set_vector4(const char* uniform_name, const glm::vec4& vector);

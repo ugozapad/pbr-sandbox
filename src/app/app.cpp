@@ -1,4 +1,6 @@
 #include "app/app.h"
+#include "app/resource_manager.h"
+
 #include "render/renderdevice.h"
 #include "render/vertexbuffer.h"
 #include "render/indexbuffer.h"
@@ -17,6 +19,8 @@ struct Scene
 	IndexBuffer* m_index_buffer;
 	ShaderProgram* m_shader_prog;
 	RenderDevice* m_render_device;
+
+	std::shared_ptr<Texture2D> m_texture;
 
 	void create()
 	{
@@ -40,10 +44,14 @@ struct Scene
 		m_index_buffer = m_render_device->create_index_buffer(indices, sizeof(indices), BufferAccess::Static);
 
 		m_shader_prog = ShaderProgramManager::get_instance().create_program("test", "data/test.vsh", "data/test.psh");
+
+		m_texture = ResourceManager::get_instance().create_resource<Texture2D>("data/test.png");
 	}
 
 	void destroy()
 	{
+		m_texture.reset();
+
 		//ShaderProgramManager::get_instance().delete_program(m_shader_prog);
 		m_render_device->delete_vertex_buffer(m_vertex_buffer);
 	}
@@ -57,6 +65,8 @@ struct Scene
 	{
 		m_render_device->clear_color(0.5f, 0.5f, 0.5f, 1.0f);
 		m_render_device->clear(RenderDevice::CLEAR_COLOR);
+
+		m_texture->bind(0);
 
 		m_render_device->set_vertex_buffer(m_vertex_buffer);
 
@@ -75,6 +85,7 @@ struct Scene
 		m_render_device->set_index_buffer(m_index_buffer);
 
 		ShaderProgramManager::get_instance().set_shader_program(m_shader_prog);
+
 
 		m_render_device->draw_elements(PM_TRIANGLES, 6);
 	}

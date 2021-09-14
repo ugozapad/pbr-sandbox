@@ -64,6 +64,11 @@ ShaderProgram::~ShaderProgram()
 	glDeleteProgram(m_program);
 }
 
+void ShaderProgram::set_texture_sampler(int slot, const char* name)
+{
+	glUniform1i(get_uniform_location(name), slot);
+}
+
 void ShaderProgram::set_vector2(const char* uniform_name, const glm::vec2& vector)
 {
 	glUniform2fv(get_uniform_location(uniform_name), 1, glm::value_ptr(vector));
