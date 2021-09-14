@@ -1,6 +1,9 @@
 #version 330 core
 
 layout(location=0) in vec3 position;
+layout(location=0) in vec3 color;
+layout(location=0) in vec2 texcoord;
+
 
 void main()
 {
