@@ -17,6 +17,8 @@ public:
 
 	void run();
 
+	GLFWwindow* get_window() { return m_window; }
+
 private:
 	GLFWwindow* m_window;
 };

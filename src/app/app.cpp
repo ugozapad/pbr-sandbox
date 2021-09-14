@@ -1,4 +1,5 @@
 #include "app/app.h"
+#include "app/camera.h"
 #include "app/resource_manager.h"
 
 #include "render/renderdevice.h"
@@ -13,6 +14,10 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_sinks.h>
 
+#define TINYGLTF_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "tiny_gltf.h"
+
 struct Scene
 {
 	VertexBuffer* m_vertex_buffer;
@@ -21,6 +26,10 @@ struct Scene
 	RenderDevice* m_render_device;
 
 	std::shared_ptr<Texture2D> m_texture;
+
+	Camera m_camera;
+
+	glm::mat4 m_proj;
 
 	void create()
 	{
@@ -58,7 +67,43 @@ struct Scene
 
 	void update(float dt)
 	{
+		update_camera(dt);
+	}
 
+	void update_camera(float dt)
+	{
+		GLFWwindow* window = App::get_instance().get_window();
+
+		Camera::MovmentDir camDir = (Camera::MovmentDir)0;
+		if (glfwGetKey(window, GLFW_KEY_W))
+			camDir = Camera::Forward;
+		if (glfwGetKey(window, GLFW_KEY_S))
+			camDir = Camera::Backward;
+		if (glfwGetKey(window, GLFW_KEY_A))
+			camDir = Camera::Left;
+		if (glfwGetKey(window, GLFW_KEY_D))
+			camDir = Camera::Right;
+
+		int width, height;
+		glfwGetWindowSize(window, &width, &height);
+
+		double x, y;
+		glfwGetCursorPos(window, &x, &y);
+
+		m_camera.update(camDir, x, y, width, height, dt);
+
+		update_matrices();
+	}
+
+	void update_matrices()
+	{
+		GLFWwindow* window = App::get_instance().get_window();
+
+		int width, height;
+		glfwGetWindowSize(window, &width, &height);
+
+		float aspect = (float)width / (float)height;
+		m_proj = glm::perspective(glm::radians(75.0f), aspect, 0.001f, 1000.0f);
 	}
 
 	void render()
@@ -86,6 +131,12 @@ struct Scene
 
 		ShaderProgramManager::get_instance().set_shader_program(m_shader_prog);
 
+		// set matrices
+		glm::mat4 world = glm::mat4(1.0f);
+
+		glm::mat4 mvp = glm::identity<glm::mat4>();
+		mvp = m_proj * m_camera.get_view_matr() * world;
+		m_shader_prog->set_matrix4("u_mvp", mvp);
 
 		m_render_device->draw_elements(PM_TRIANGLES, 6);
 	}
@@ -134,6 +185,9 @@ void App::run()
 {
 	RenderDevice* render_device = RenderDevice::get_instance();
 
+	float startTime = glfwGetTime();
+	float endTime = glfwGetTime();
+
 	while (!glfwWindowShouldClose(m_window))
 	{
 		if (glfwGetKey(m_window, GLFW_KEY_ESCAPE))
@@ -142,7 +196,14 @@ void App::run()
 		glfwSwapBuffers(m_window);
 		glfwPollEvents();
 
+		startTime = glfwGetTime();
+		float dt = startTime - endTime;
+
+		g_scene.update(dt);
+
 		g_scene.render();
+
+		endTime = startTime;
 	}
 }
 
