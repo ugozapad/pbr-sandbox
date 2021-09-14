@@ -14,4 +14,7 @@ target_include_directories(pbr-sandbox PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/rend
 target_include_directories(pbr-sandbox PRIVATE "${CMAKE_SOURCE_DIR}/libs/glm")
 target_include_directories(pbr-sandbox PRIVATE "${CMAKE_SOURCE_DIR}/libs/stb")
 target_include_directories(pbr-sandbox PRIVATE "${CMAKE_SOURCE_DIR}/libs/tinygltf")
-target_link_libraries(pbr-sandbox glfw spdlog)
+target_include_directories(pbr-sandbox PRIVATE "${CMAKE_SOURCE_DIR}/libs/assimp/include")
+
+target_link_directories(pbr-sandbox PRIVATE "${CMAKE_SOURCE_DIR}/libs/assimp/libs/x64")
+target_link_libraries(pbr-sandbox glfw spdlog assimp-vc142-mt)
