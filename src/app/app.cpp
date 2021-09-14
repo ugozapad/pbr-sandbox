@@ -18,7 +18,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "tiny_gltf.h"
 
-struct Scene
+struct AppPrivate
 {
 	VertexBuffer* m_vertex_buffer;
 	IndexBuffer* m_index_buffer;
@@ -168,7 +168,7 @@ struct Scene
 	}
 };
 	
-static Scene g_scene;
+static AppPrivate g_app_private;
 
 void App::init()
 {
@@ -195,12 +195,12 @@ void App::init()
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-	g_scene.create();
+	g_app_private.create();
 }
 
 void App::shutdown()
 {
-	g_scene.destroy();
+	g_app_private.destroy();
 
 	ShaderProgramManager::get_instance().shutdown();
 
@@ -225,9 +225,9 @@ void App::run()
 		startTime = glfwGetTime();
 		float dt = startTime - endTime;
 
-		g_scene.update(dt);
+		g_app_private.update(dt);
 
-		g_scene.render();
+		g_app_private.render();
 
 		endTime = startTime;
 	}
