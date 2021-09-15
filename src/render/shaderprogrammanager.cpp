@@ -27,6 +27,11 @@ void ShaderProgramManager::set_shader_program(ShaderProgram* program)
 
 ShaderProgram* ShaderProgramManager::create_program(const char* name, const char* vsfilename, const char* fsfilename)
 {
+	for (std::vector<ShaderProgram*>::iterator it = m_programs.begin(); it != m_programs.end(); ++it) {
+		if (strcmp((*it)->m_file_name, name) == 0)
+			return (*it);
+	}
+
 	ShaderProgram* program = new ShaderProgram(name, vsfilename, fsfilename);
 	m_programs.push_back(program);
 	return program;
@@ -34,8 +39,7 @@ ShaderProgram* ShaderProgramManager::create_program(const char* name, const char
 
 void ShaderProgramManager::delete_program(ShaderProgram* program)
 {
-	if (program)
-	{
+	if (program) {
 		delete program;
 	}
 }

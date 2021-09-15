@@ -3,7 +3,21 @@
 #include "render/vertexbuffer.h"
 #include "render/indexbuffer.h"
 
-Mesh* Mesh::create_from_scene_node(aiMesh* mesh, const aiScene* scene)
+#include <string>
+
+#include "glad/glad.h"
+
+inline static glm::mat4 ai_to_gl(const aiMatrix4x4& from)
+{
+	return glm::mat4(
+		(double)from.a1, (double)from.b1, (double)from.c1, (double)from.d1,
+		(double)from.a2, (double)from.b2, (double)from.c2, (double)from.d2,
+		(double)from.a3, (double)from.b3, (double)from.c3, (double)from.d3,
+		(double)from.a4, (double)from.b4, (double)from.c4, (double)from.d4
+	);
+}
+
+Mesh* Mesh::create_from_scene_node(aiMesh* mesh, aiNode* node, const aiScene* scene)
 {
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
@@ -42,28 +56,40 @@ Mesh* Mesh::create_from_scene_node(aiMesh* mesh, const aiScene* scene)
 
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-	aiString albedo_name;
-	if (material->GetTexture(aiTextureType_BASE_COLOR, 0, &albedo_name) != aiReturn_SUCCESS)
-		material->GetTexture(aiTextureType_DIFFUSE, 0, &albedo_name);
+	aiString ai_albedo_name;
+	if (material->GetTexture(aiTextureType_BASE_COLOR, 0, &ai_albedo_name) != aiReturn_SUCCESS)
+		material->GetTexture(aiTextureType_DIFFUSE, 0, &ai_albedo_name);
 
-	material_info.m_albedo_filename = strdup(albedo_name.C_Str());
+	std::string albedo_name = "data/sponza/glTF/";
+	albedo_name += ai_albedo_name.C_Str();
+
+	material_info.m_albedo_filename = strdup(albedo_name.c_str());
 
 	aiString normal_name;
 	material->GetTexture(aiTextureType_NORMALS, 0, &normal_name);
 	material_info.m_normal_filename = strdup(normal_name.C_Str());
 
-	return new Mesh(material_info, vertices, indices);
+	glm::mat4 matr = glm::mat4(1.0f);
+	matr = ai_to_gl(node->mTransformation);
+	//matr = glm::scale(matr, glm::vec3(0.1f));
+
+	return new Mesh(material_info, vertices, indices, matr);
 }
 
-Mesh::Mesh(const MaterialCreationInfo& info, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices)
+Mesh::Mesh(const MaterialCreationInfo& info, 
+	const std::vector<Vertex>& vertices, 
+	const std::vector<uint32_t>& indices, 
+	const glm::mat4& mat)
 {
 	m_vb_count = vertices.size();
 	m_vb = RenderDevice::get_instance()->create_vertex_buffer((void*)vertices.data(), vertices.size() * sizeof(Vertex), BufferAccess::Static);
 
 	m_ib_count = indices.size();
-	m_ib = RenderDevice::get_instance()->create_index_buffer((void*)indices.data(), indices.size(), BufferAccess::Static);
+	m_ib = RenderDevice::get_instance()->create_index_buffer((void*)indices.data(), indices.size() * sizeof(uint32_t), BufferAccess::Static);
 
 	m_mat.init(info);
+
+	m_model_matr = mat;
 }
 
 Mesh::~Mesh()
@@ -75,5 +101,21 @@ Mesh::~Mesh()
 
 void Mesh::render()
 {
+	RenderDevice::get_instance()->set_vertex_buffer(m_vb);
 
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// normal attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	// texture coord attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+	RenderDevice::get_instance()->set_index_buffer(m_ib);
+
+	m_mat.render(m_ib_count, m_model_matr);
 }

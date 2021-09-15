@@ -8,6 +8,7 @@
 #include "render/shaderprogrammanager.h"
 #include "render/shaderprogram.h"
 #include "render/scene.h"
+#include "render/constantscache.h"
 
 #include "glad/glad.h"
 
@@ -106,47 +107,79 @@ struct AppPrivate
 
 		float aspect = (float)width / (float)height;
 		m_proj = glm::perspective(glm::radians(75.0f), aspect, 0.001f, 1000.0f);
+
+		ShaderConstantCache::get_instance().set_proj(m_proj);
+		ShaderConstantCache::get_instance().set_view(m_camera.get_view_matr());
 	}
 
 	void render()
 	{
 		m_render_device->clear_color(0.5f, 0.5f, 0.5f, 1.0f);
-		m_render_device->clear(RenderDevice::CLEAR_COLOR);
+		m_render_device->clear(RenderDevice::CLEAR_COLOR | RenderDevice::CLEAR_DEPTH);
 
-		m_texture->bind(0);
+		glEnable(GL_DEPTH_TEST);
 
-		m_render_device->set_vertex_buffer(m_vertex_buffer);
+		//m_texture->bind(0);
 
-		// position attribute
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
+		//m_render_device->set_vertex_buffer(m_vertex_buffer);
 
-		// color attribute
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-		glEnableVertexAttribArray(1);
+		//// position attribute
+		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		//glEnableVertexAttribArray(0);
 
-		// texture coord attribute
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-		glEnableVertexAttribArray(2);
+		//// color attribute
+		//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		//glEnableVertexAttribArray(1);
 
-		m_render_device->set_index_buffer(m_index_buffer);
+		//// texture coord attribute
+		//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		//glEnableVertexAttribArray(2);
 
-		ShaderProgramManager::get_instance().set_shader_program(m_shader_prog);
+		//m_render_device->set_index_buffer(m_index_buffer);
 
-		// set matrices
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		//ShaderProgramManager::get_instance().set_shader_program(m_shader_prog);
 
-		glm::mat4 mvp = glm::identity<glm::mat4>();
-		mvp = m_proj * m_camera.get_view_matr() * model;
-		m_shader_prog->set_matrix4("u_mvp", mvp);
+		//// set matrices
+		//glm::mat4 model = glm::mat4(1.0f);
+		//model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 
-		m_render_device->draw_elements(PM_TRIANGLES, 6);
+		//glm::mat4 mvp = glm::identity<glm::mat4>();
+		//mvp = m_proj * m_camera.get_view_matr() * model;
+		//m_shader_prog->set_matrix4("u_mvp", mvp);
+
+		//m_render_device->draw_elements(PM_TRIANGLES, 6);
+
+		m_sponza_scene->draw();
 	}
 
 };
 
 static AppPrivate g_app_private;
+
+void APIENTRY R_GLDebugOutput(GLenum source,
+	GLenum type,
+	unsigned int id,
+	GLenum severity,
+	GLsizei length,
+	const char* message,
+	const void* userParam)
+{
+
+	if (type != GL_DEBUG_TYPE_ERROR)
+		return;
+
+	if (type == GL_DEBUG_TYPE_ERROR)
+		spdlog::error("[gl]: {}type = 0x{}, severity = 0x{}, message = {}",
+		(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR ** " : ""),
+			type, severity, message);
+	else
+		spdlog::info("[gl]: {}type = 0x{}, severity = 0x{}, message = {}",
+		(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR ** " : ""),
+			type, severity, message);
+
+	if (type == GL_DEBUG_TYPE_ERROR)
+		DebugBreak();
+}
 
 void App::init()
 {
@@ -172,6 +205,13 @@ void App::init()
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
+	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
+	glDebugMessageCallbackARB(R_GLDebugOutput, 0);
 
 	g_app_private.create();
 }

@@ -43,7 +43,7 @@ void Camera::update(MovmentDir dir, float x, float y, int width, int height, flo
 	m_dir.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
 	m_front = glm::normalize(m_dir);
 
-	float speed = 5.0f * dt;
+	float speed = 15.0f * dt;
 
 	if (dir == Camera::Forward)
 		m_pos += speed * m_front;
