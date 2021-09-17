@@ -195,7 +195,7 @@ void App::init()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	m_window = glfwCreateWindow(1280, 720, "pbr-sandbox", nullptr, nullptr);
+	m_window = glfwCreateWindow(1600, 900, "pbr-sandbox", nullptr, nullptr);
 	glfwMakeContextCurrent(m_window);
 
 	gladLoadGL();

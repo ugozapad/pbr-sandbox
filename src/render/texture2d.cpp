@@ -2,6 +2,11 @@
 
 #include "glad/glad.h"
 
+#include <stdlib.h>
+#include <math.h>
+#include <limits>
+#include <algorithm>
+
 uint32_t get_gl_format(ImageFormat format)
 {
 	switch (format)
@@ -41,21 +46,27 @@ void Texture2D::init_from_memory(void* data, int width, int height, ImageFormat 
 	else if (format == ImageFormat::FMT_RGBA)
 		internal_format = GL_RGBA8;
 
-	glTextureStorage2D(m_texture_handle, 1, internal_format, width, height);
+	int mipmap_levels = (GLsizei)floor(log2(std::max(width, height)));
+	if (mipmap_levels == 0)
+		mipmap_levels = 1;
+
+	glTextureStorage2D(m_texture_handle, mipmap_levels, internal_format, width, height);
 	glTextureSubImage2D(m_texture_handle, 0, 0, 0, width, height, get_gl_format(format), GL_UNSIGNED_BYTE, data);
 
-	glGenerateTextureMipmap(m_texture_handle);
-
-	glBindTexture(GL_TEXTURE_2D, m_texture_handle);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	if (mipmap_levels > 1)
+		glGenerateTextureMipmap(m_texture_handle);
 
 	glTextureParameterf(m_texture_handle, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTextureParameterf(m_texture_handle, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTextureParameterf(m_texture_handle, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+	glTextureParameterf(m_texture_handle, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	if (mipmap_levels > 1)
+		glTextureParameterf(m_texture_handle, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
 	glTextureParameterf(m_texture_handle, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-//#define ENABLE_TEST_ANISOTROPIC_FILTERING
+#define ENABLE_TEST_ANISOTROPIC_FILTERING
 
 #ifdef ENABLE_TEST_ANISOTROPIC_FILTERING
 

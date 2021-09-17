@@ -16,6 +16,7 @@ void Material::init(const MaterialCreationInfo& info)
 	//	m_tex_normal = resmgr.create_resource<Texture2D>(info.m_normal_filename);
 
 	m_clamp_edge = info.m_clamp_edge;
+	m_transparent = info.m_transparent;
 
 	m_shader_prog = ShaderProgramManager::get_instance().create_program("model", "data/model.vsh", "data/model.psh");
 }

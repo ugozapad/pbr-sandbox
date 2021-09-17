@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include <glm/gtx/matrix_decompose.hpp>
+
 #include "glad/glad.h"
 
 inline static glm::mat4 ai_to_gl(const aiMatrix4x4& from)
@@ -90,6 +92,8 @@ Mesh::Mesh(const MaterialCreationInfo& info,
 	m_mat.init(info);
 
 	m_model_matr = mat;
+
+	update_internal_matrices_and_vectors();
 }
 
 Mesh::~Mesh()
@@ -118,4 +122,12 @@ void Mesh::render()
 	RenderDevice::get_instance()->set_index_buffer(m_ib);
 
 	m_mat.render(m_ib_count, m_model_matr);
+}
+
+void Mesh::update_internal_matrices_and_vectors()
+{
+	glm::vec3 translation;
+	glm::vec3 skew;
+	glm::vec4 perspective;
+	glm::decompose(m_model_matr, m_scale, m_rot, m_pos, skew, perspective);
 }

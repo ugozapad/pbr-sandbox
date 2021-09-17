@@ -32,10 +32,16 @@ public:
 	void render();
 
 private:
+	void update_internal_matrices_and_vectors();
+
+private:
 	VertexBuffer* m_vb;
 	IndexBuffer* m_ib;
 
 	glm::mat4 m_model_matr;
+	glm::vec3 m_pos;
+	glm::quat m_rot;
+	glm::vec3 m_scale;
 	Material m_mat;
 
 	size_t m_vb_count, m_ib_count;

@@ -11,12 +11,14 @@ struct MaterialCreationInfo
 	const char* m_albedo_filename;
 	const char* m_normal_filename;
 	bool m_clamp_edge;
+	bool m_transparent;
 
 	void init()
 	{
 		m_albedo_filename = nullptr;
 		m_normal_filename = nullptr;
 		m_clamp_edge = false;
+		m_transparent = false;
 	}
 };
 
@@ -37,4 +39,5 @@ private:
 	ShaderProgram* m_shader_prog;
 
 	bool m_clamp_edge;
+	bool m_transparent;
 };
