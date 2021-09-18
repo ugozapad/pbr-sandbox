@@ -31,7 +31,7 @@ void Material::bind()
 	ShaderProgramManager::getInstance().setShaderProgram(m_shader_prog);
 
 	m_tex_albedo->bind(0);
-	m_shader_prog->set_texture_sampler(0, "u_tex0");
+	m_shader_prog->setTextureSampler(0, "u_tex0");
 
 }
 
@@ -39,12 +39,23 @@ void Material::render(size_t vertices_nbr, const glm::mat4& model)
 {
 	bind();
 
+	m_shader_prog->setVector3("u_objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+	m_shader_prog->setVector3("u_lightColor", glm::vec3(0.5f, 0.5f, 0.5f));
+	m_shader_prog->setVector3("u_lightPos", glm::vec3(1.2f, 1.0f, 2.0f));
+
 	ShaderConstantCache& cache = ShaderConstantCache::getInstance();
+
+	m_shader_prog->setMatrix4("u_model", cache.getModel());
+	m_shader_prog->setMatrix4("u_view", cache.getView());
+	m_shader_prog->setMatrix4("u_projection", cache.getProj());
 
 	glm::mat4 mvp = glm::identity<glm::mat4>();
 	mvp = cache.getProj() * cache.getView() * model;
 
-	m_shader_prog->set_matrix4("u_mvp", mvp);
+	m_shader_prog->setMatrix4("u_mvp", mvp);
+	m_shader_prog->setMatrix4("u_inversedModelMatrix", cache.getInversedModelMatrix());
+	m_shader_prog->setMatrix4("u_normalMatrix", cache.getNormalMatrix());
+	m_shader_prog->setVector3("u_cameraPosition", cache.getCameraPos());
 
 	RenderDevice::getInstance()->drawElements(PM_TRIANGLES, vertices_nbr);
 }
