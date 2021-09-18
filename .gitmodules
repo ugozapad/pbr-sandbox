@@ -13,3 +13,6 @@
 [submodule "libs/spdlog"]
 	path = libs/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "libs/uvre"]
+	path = libs/uvre
+	url = https://github.com/undnull/uvre.git
