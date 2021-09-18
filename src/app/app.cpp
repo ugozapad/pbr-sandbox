@@ -16,6 +16,10 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_sinks.h>
 
+#ifdef _MSC_VER
+#include <spdlog/sinks/msvc_sink.h>
+#endif // _MSC_VER
+
 struct AppPrivate
 {
 	VertexBuffer* m_vertex_buffer;
@@ -188,6 +192,9 @@ void App::init()
 	logger->sinks().clear();
 	logger->sinks().push_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("engine_log.txt", true));
 	logger->sinks().push_back(std::make_shared<spdlog::sinks::stdout_sink_mt>());
+#ifdef _MSC_VER
+	logger->sinks().push_back(std::make_shared<spdlog::sinks::msvc_sink_mt>());
+#endif // _MSC_VER
 
 	glfwInit();
 
