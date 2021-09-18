@@ -8,13 +8,13 @@
 
 #include <spdlog/spdlog.h>
 
-RenderDevice* RenderDevice::get_instance()
+RenderDevice* RenderDevice::getInstance()
 {
 	static RenderDevice s_render_device;
 	return &s_render_device;
 }
 
-void RenderDevice::clear_color(float r, float g, float b, float a)
+void RenderDevice::clearColor(float r, float g, float b, float a)
 {
 	glClearColor(r, g, b, a);
 }
@@ -32,7 +32,7 @@ void RenderDevice::clear(uint32_t flag)
 	glClear(clear_flags);
 }
 
-void RenderDevice::draw_arrays(PrimMode mode, int first, size_t count)
+void RenderDevice::drawArrays(PrimMode mode, int first, size_t count)
 {
 	GLenum gl_mode;
 
@@ -52,7 +52,7 @@ void RenderDevice::draw_arrays(PrimMode mode, int first, size_t count)
 	glDrawArrays(gl_mode, first, count);
 }
 
-void RenderDevice::draw_elements(PrimMode mode, int count)
+void RenderDevice::drawElements(PrimMode mode, int count)
 {
 	GLenum gl_mode;
 
@@ -72,29 +72,29 @@ void RenderDevice::draw_elements(PrimMode mode, int count)
 	glDrawElements(gl_mode, count, GL_UNSIGNED_INT, 0);
 }
 
-VertexBuffer* RenderDevice::create_vertex_buffer(void* data, size_t size, BufferAccess access)
+VertexBuffer* RenderDevice::createVertexBuffer(void* data, size_t size, BufferAccess access)
 {
 	return new VertexBuffer(data, size, access);
 }
 
-void RenderDevice::delete_vertex_buffer(VertexBuffer* buffer)
+void RenderDevice::deleteVertexBuffer(VertexBuffer* buffer)
 {
 	if (buffer)
 		delete buffer;
 }
 
-IndexBuffer* RenderDevice::create_index_buffer(void* data, size_t size, BufferAccess access)
+IndexBuffer* RenderDevice::createIndexBuffer(void* data, size_t size, BufferAccess access)
 {
 	return new IndexBuffer(data, size, access);
 }
 
-void RenderDevice::delete_index_buffer(IndexBuffer* buffer)
+void RenderDevice::deleteIndexBuffer(IndexBuffer* buffer)
 {
 	if (buffer)
 		delete buffer;
 }
 
-void RenderDevice::set_vertex_buffer(VertexBuffer* buffer)
+void RenderDevice::setVertexBuffer(VertexBuffer* buffer)
 {
 	if (buffer)
 		glBindBuffer(GL_ARRAY_BUFFER, buffer->m_buffer);
@@ -102,7 +102,7 @@ void RenderDevice::set_vertex_buffer(VertexBuffer* buffer)
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void RenderDevice::set_index_buffer(IndexBuffer* buffer)
+void RenderDevice::setIndexBuffer(IndexBuffer* buffer)
 {
 	if (buffer)
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->m_buffer);

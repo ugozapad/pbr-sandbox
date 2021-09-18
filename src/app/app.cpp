@@ -32,7 +32,7 @@ struct AppPrivate
 
 	void create()
 	{
-		m_render_device = RenderDevice::get_instance();
+		m_render_device = RenderDevice::getInstance();
 
 		float vertices[] = {
 			// positions          // colors           // texture coords
@@ -42,20 +42,20 @@ struct AppPrivate
 			-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
 		};
 
-		m_vertex_buffer = m_render_device->create_vertex_buffer(vertices, sizeof(vertices), BufferAccess::Static);
+		m_vertex_buffer = m_render_device->createVertexBuffer(vertices, sizeof(vertices), BufferAccess::Static);
 
 		unsigned int indices[] = {
 			0, 1, 3, // first triangle
 			1, 2, 3  // second triangle
 		};
 
-		m_index_buffer = m_render_device->create_index_buffer(indices, sizeof(indices), BufferAccess::Static);
+		m_index_buffer = m_render_device->createIndexBuffer(indices, sizeof(indices), BufferAccess::Static);
 
-		m_shader_prog = ShaderProgramManager::get_instance().create_program("test", "data/test.vsh", "data/test.psh");
+		m_shader_prog = ShaderProgramManager::getInstance().createProgram("test", "data/test.vsh", "data/test.psh");
 
-		m_texture = ResourceManager::get_instance().create_resource<Texture2D>("data/test.png");
+		m_texture = ResourceManager::getInstance().createResource<Texture2D>("data/test.png");
 
-		m_sponza_scene = Scene::create_from_file("data/sponza/glTF/Sponza.gltf");
+		m_sponza_scene = Scene::createFromFile("data/sponza/glTF/Sponza.gltf");
 	}
 
 	void destroy()
@@ -65,17 +65,17 @@ struct AppPrivate
 		m_texture.reset();
 
 		//ShaderProgramManager::get_instance().delete_program(m_shader_prog);
-		m_render_device->delete_vertex_buffer(m_vertex_buffer);
+		m_render_device->deleteVertexBuffer(m_vertex_buffer);
 	}
 
 	void update(float dt)
 	{
-		update_camera(dt);
+		updateCamera(dt);
 	}
 
-	void update_camera(float dt)
+	void updateCamera(float dt)
 	{
-		GLFWwindow* window = App::get_instance().get_window();
+		GLFWwindow* window = App::getInstance().getWindow();
 
 		Camera::MovmentDir camDir = (Camera::MovmentDir)0;
 		if (glfwGetKey(window, GLFW_KEY_W))
@@ -95,26 +95,27 @@ struct AppPrivate
 
 		m_camera.update(camDir, x, y, width, height, dt);
 
-		update_matrices();
+		updateMatrices();
+
+		ShaderConstantCache::getInstance().setCameraPos(m_camera.m_pos);
 	}
 
-	void update_matrices()
+	void updateMatrices()
 	{
-		GLFWwindow* window = App::get_instance().get_window();
+		GLFWwindow* window = App::getInstance().getWindow();
 
 		int width, height;
 		glfwGetWindowSize(window, &width, &height);
 
 		float aspect = (float)width / (float)height;
-		m_proj = glm::perspective(glm::radians(75.0f), aspect, 0.001f, 1000.0f);
+		m_proj = glm::perspective(glm::radians(75.0f), aspect, 0.1f, 1000.0f);
 
-		ShaderConstantCache::get_instance().set_proj(m_proj);
-		ShaderConstantCache::get_instance().set_view(m_camera.get_view_matr());
+		ShaderConstantCache::getInstance().setProj(m_proj);
+		ShaderConstantCache::getInstance().setView(m_camera.get_view_matr());
 	}
 
 	void render()
 	{
-		m_render_device->clear_color(0.5f, 0.5f, 0.5f, 1.0f);
 		m_render_device->clear(RenderDevice::CLEAR_COLOR | RenderDevice::CLEAR_DEPTH);
 
 		glEnable(GL_DEPTH_TEST);
@@ -200,7 +201,7 @@ void App::init()
 
 	gladLoadGL();
 
-	ShaderProgramManager::get_instance().init();
+	ShaderProgramManager::getInstance().init();
 
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
@@ -220,14 +221,14 @@ void App::shutdown()
 {
 	g_app_private.destroy();
 
-	ShaderProgramManager::get_instance().shutdown();
+	ShaderProgramManager::getInstance().shutdown();
 
 	glfwTerminate();
 }
 
 void App::run()
 {
-	RenderDevice* render_device = RenderDevice::get_instance();
+	RenderDevice* render_device = RenderDevice::getInstance();
 
 	float startTime = glfwGetTime();
 	float endTime = glfwGetTime();
@@ -253,9 +254,9 @@ void App::run()
 
 int main()
 {
-	App::get_instance().init();
-	App::get_instance().run();
-	App::get_instance().shutdown();
+	App::getInstance().init();
+	App::getInstance().run();
+	App::getInstance().shutdown();
 
 	return 0;
 }

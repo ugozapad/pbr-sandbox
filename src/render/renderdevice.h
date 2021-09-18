@@ -15,23 +15,23 @@ public:
 		CLEAR_STENCIL = 1 << 2
 	};
 public:
-	static RenderDevice* get_instance();
+	static RenderDevice* getInstance();
 public:
-	void clear_color(float r, float g, float b, float a);
+	void clearColor(float r, float g, float b, float a);
 	void clear(uint32_t flag);
 
 	// drawing
-	void draw_arrays(PrimMode mode, int first, size_t count);
-	void draw_elements(PrimMode mode, int count);
+	void drawArrays(PrimMode mode, int first, size_t count);
+	void drawElements(PrimMode mode, int count);
 
 	// buffer creation
-	VertexBuffer* create_vertex_buffer(void* data, size_t size, BufferAccess access);
-	void delete_vertex_buffer(VertexBuffer* buffer);
+	VertexBuffer* createVertexBuffer(void* data, size_t size, BufferAccess access);
+	void deleteVertexBuffer(VertexBuffer* buffer);
 
-	IndexBuffer* create_index_buffer(void* data, size_t size, BufferAccess access);
-	void delete_index_buffer(IndexBuffer* buffer);
+	IndexBuffer* createIndexBuffer(void* data, size_t size, BufferAccess access);
+	void deleteIndexBuffer(IndexBuffer* buffer);
 
 	// set
-	void set_vertex_buffer(VertexBuffer* buffer);
-	void set_index_buffer(IndexBuffer* buffer);
+	void setVertexBuffer(VertexBuffer* buffer);
+	void setIndexBuffer(IndexBuffer* buffer);
 };

@@ -2,7 +2,7 @@
 
 #include <spdlog/spdlog.h>
 
-Scene* Scene::create_from_file(const char* filename)
+Scene* Scene::createFromFile(const char* filename)
 {
 	Assimp::Importer imported;
 	const aiScene* scene = imported.ReadFile(filename, aiProcess_Triangulate |
@@ -20,18 +20,18 @@ Scene* Scene::create_from_file(const char* filename)
 
 Scene::Scene(aiNode *node, const aiScene *scene)
 {
-	process_node(node, scene);
+	processNode(node, scene);
 }
 
-void Scene::process_node(aiNode *node, const aiScene *scene)
+void Scene::processNode(aiNode *node, const aiScene *scene)
 {
 	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		m_meshes.push_back(Mesh::create_from_scene_node(mesh, node, scene));
+		m_meshes.push_back(Mesh::createFromSceneNode(mesh, node, scene));
 	}
 
 	for (unsigned int i = 0; i < node->mNumChildren; i++) {
-		process_node(node->mChildren[i], scene);
+		processNode(node->mChildren[i], scene);
 	}
 }
 

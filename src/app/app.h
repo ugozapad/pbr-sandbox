@@ -6,7 +6,7 @@
 class App
 {
 public:
-	static App& get_instance() 
+	static App& getInstance() 
 	{
 		static App s_app;
 		return s_app;
@@ -17,7 +17,7 @@ public:
 
 	void run();
 
-	GLFWwindow* get_window() { return m_window; }
+	GLFWwindow* getWindow() { return m_window; }
 
 private:
 	GLFWwindow* m_window;

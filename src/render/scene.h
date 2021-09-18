@@ -5,10 +5,10 @@
 class Scene
 {
 public:
-	static Scene* create_from_file(const char* filename);
+	static Scene* createFromFile(const char* filename);
 private:
 	Scene(aiNode *node, const aiScene *scene);
-	void process_node(aiNode *node, const aiScene *scene);
+	void processNode(aiNode *node, const aiScene *scene);
 public:
 	~Scene();
 	void draw();

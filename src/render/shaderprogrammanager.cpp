@@ -17,7 +17,7 @@ void ShaderProgramManager::shutdown()
 	m_programs.clear();
 }
 
-void ShaderProgramManager::set_shader_program(ShaderProgram* program)
+void ShaderProgramManager::setShaderProgram(ShaderProgram* program)
 {
 	if (program)
 		glUseProgram(program->m_program);
@@ -25,7 +25,7 @@ void ShaderProgramManager::set_shader_program(ShaderProgram* program)
 		glUseProgram(0);
 }
 
-ShaderProgram* ShaderProgramManager::create_program(const char* name, const char* vsfilename, const char* fsfilename)
+ShaderProgram* ShaderProgramManager::createProgram(const char* name, const char* vsfilename, const char* fsfilename)
 {
 	for (std::vector<ShaderProgram*>::iterator it = m_programs.begin(); it != m_programs.end(); ++it) {
 		if (strcmp((*it)->m_file_name, name) == 0)

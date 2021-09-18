@@ -9,7 +9,7 @@ class ShaderProgram;
 class ShaderProgramManager
 {
 public:
-	static ShaderProgramManager& get_instance()
+	static ShaderProgramManager& getInstance()
 	{
 		static ShaderProgramManager instance;
 		return instance;
@@ -18,9 +18,9 @@ public:
 	void init();
 	void shutdown();
 
-	void set_shader_program(ShaderProgram* program);
+	void setShaderProgram(ShaderProgram* program);
 
-	ShaderProgram* create_program(const char* name, const char* vsfilename, const char* fsfilename);
+	ShaderProgram* createProgram(const char* name, const char* vsfilename, const char* fsfilename);
 	void delete_program(ShaderProgram* program);
 
 private:

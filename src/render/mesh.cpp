@@ -19,7 +19,7 @@ inline static glm::mat4 ai_to_gl(const aiMatrix4x4& from)
 	);
 }
 
-Mesh* Mesh::create_from_scene_node(aiMesh* mesh, aiNode* node, const aiScene* scene)
+Mesh* Mesh::createFromSceneNode(aiMesh* mesh, aiNode* node, const aiScene* scene)
 {
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
@@ -67,9 +67,18 @@ Mesh* Mesh::create_from_scene_node(aiMesh* mesh, aiNode* node, const aiScene* sc
 
 	material_info.m_albedo_filename = strdup(albedo_name.c_str());
 
-	aiString normal_name;
-	material->GetTexture(aiTextureType_NORMALS, 0, &normal_name);
-	material_info.m_normal_filename = strdup(normal_name.C_Str());
+	aiString ai_normal_name;
+	material->GetTexture(aiTextureType_NORMALS, 0, &ai_normal_name);
+
+	std::string normalmap_name = ai_normal_name.C_Str();
+	if (!normalmap_name.empty())
+	{
+		normalmap_name.clear();
+		normalmap_name = "data/sponza/glTF/";
+		normalmap_name += ai_normal_name.C_Str();
+
+		material_info.m_normal_filename = strdup(normalmap_name.c_str());
+	}
 
 	glm::mat4 matr = glm::mat4(1.0f);
 	matr = ai_to_gl(node->mTransformation);
@@ -84,28 +93,28 @@ Mesh::Mesh(const MaterialCreationInfo& info,
 	const glm::mat4& mat)
 {
 	m_vb_count = vertices.size();
-	m_vb = RenderDevice::get_instance()->create_vertex_buffer((void*)vertices.data(), vertices.size() * sizeof(Vertex), BufferAccess::Static);
+	m_vertex_buffer = RenderDevice::getInstance()->createVertexBuffer((void*)vertices.data(), vertices.size() * sizeof(Vertex), BufferAccess::Static);
 
 	m_ib_count = indices.size();
-	m_ib = RenderDevice::get_instance()->create_index_buffer((void*)indices.data(), indices.size() * sizeof(uint32_t), BufferAccess::Static);
+	m_index_buffer = RenderDevice::getInstance()->createIndexBuffer((void*)indices.data(), indices.size() * sizeof(uint32_t), BufferAccess::Static);
 
-	m_mat.init(info);
+	m_material.init(info);
 
-	m_model_matr = mat;
+	m_transform = mat;
 
-	update_internal_matrices_and_vectors();
+	updateInternalMatricesAndVectors();
 }
 
 Mesh::~Mesh()
 {
-	m_mat.release();
-	RenderDevice::get_instance()->delete_index_buffer(m_ib);
-	RenderDevice::get_instance()->delete_vertex_buffer(m_vb);
+	m_material.release();
+	RenderDevice::getInstance()->deleteIndexBuffer(m_index_buffer);
+	RenderDevice::getInstance()->deleteVertexBuffer(m_vertex_buffer);
 }
 
 void Mesh::render()
 {
-	RenderDevice::get_instance()->set_vertex_buffer(m_vb);
+	RenderDevice::getInstance()->setVertexBuffer(m_vertex_buffer);
 
 	// position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -119,15 +128,15 @@ void Mesh::render()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
-	RenderDevice::get_instance()->set_index_buffer(m_ib);
+	RenderDevice::getInstance()->setIndexBuffer(m_index_buffer);
 
-	m_mat.render(m_ib_count, m_model_matr);
+	m_material.render(m_ib_count, m_transform);
 }
 
-void Mesh::update_internal_matrices_and_vectors()
+void Mesh::updateInternalMatricesAndVectors()
 {
 	glm::vec3 translation;
 	glm::vec3 skew;
 	glm::vec4 perspective;
-	glm::decompose(m_model_matr, m_scale, m_rot, m_pos, skew, perspective);
+	glm::decompose(m_transform, m_scale, m_rot, m_pos, skew, perspective);
 }
