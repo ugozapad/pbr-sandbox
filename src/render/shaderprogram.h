@@ -12,12 +12,14 @@ private:
 	~ShaderProgram();
 public:
 	void setTextureSampler(int slot, const char* name);
+	void setFloat(const char* uniformName, float value);
 
 	void set_vector2(const char* uniform_name, const glm::vec2& vector);
 	void setVector3(const char* uniform_name, const glm::vec3& vector);
+	void setVector3(const char* uniform_name, float x, float y, float z);
 	void set_vector4(const char* uniform_name, const glm::vec4& vector);
 
-	void set_matrix3(const char* uniform_name, const glm::mat3& matrix);
+	void setMatrix3(const char* uniform_name, const glm::mat3& matrix);
 	void set_matrix3x4(const char* uniform_name, const glm::mat4x3& matrix);
 	void setMatrix4(const char* uniform_name, const glm::mat4& matrix);
 private:

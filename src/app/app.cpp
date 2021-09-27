@@ -26,7 +26,7 @@ struct AppPrivate
 	IndexBuffer* m_index_buffer;
 	ShaderProgram* m_shader_prog;
 	RenderDevice* m_render_device;
-	Scene* m_sponza_scene;
+	Scene* m_sponzaScene;
 
 	std::shared_ptr<Texture2D> m_texture;
 
@@ -59,12 +59,12 @@ struct AppPrivate
 
 		m_texture = ResourceManager::getInstance().createResource<Texture2D>("data/test.png");
 
-		m_sponza_scene = Scene::createFromFile("data/sponza/glTF/Sponza.gltf");
+		m_sponzaScene = Scene::createFromFile("data/sponza/glTF/Sponza.gltf");
 	}
 
 	void destroy()
 	{
-		delete m_sponza_scene;
+		delete m_sponzaScene;
 
 		m_texture.reset();
 
@@ -154,7 +154,7 @@ struct AppPrivate
 
 		//m_render_device->draw_elements(PM_TRIANGLES, 6);
 
-		m_sponza_scene->draw();
+		m_sponzaScene->draw();
 	}
 
 };

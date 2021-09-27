@@ -5,10 +5,13 @@
 Scene* Scene::createFromFile(const char* filename)
 {
 	Assimp::Importer imported;
-	const aiScene* scene = imported.ReadFile(filename, aiProcess_Triangulate |
-		aiProcess_GenSmoothNormals |
-		aiProcess_FlipUVs |
-		aiProcess_CalcTangentSpace);
+	const aiScene* scene = imported.ReadFile(filename,
+		aiProcessPreset_TargetRealtime_Quality |                     // some optimizations and safety checks
+		aiProcess_OptimizeMeshes |                                   // minimize number of meshes
+		aiProcess_PreTransformVertices |                             // apply node matrices
+		aiProcess_FixInfacingNormals | aiProcess_TransformUVCoords | // apply UV transformations
+		aiProcess_FlipUVs
+	);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		spdlog::error("scene: failed to load scene {}", imported.GetErrorString());

@@ -4,29 +4,10 @@
 
 #include <vector>
 
-class Light
+struct PointLight
 {
-public:
-	Light(const glm::vec3& position);
-
-public:
-	glm::vec3 m_diffuseColor;
-	glm::vec3 m_position;
-};
-
-class LightController
-{
-public:
-	static LightController& getInstance() {
-		static LightController instance;
-		return instance;
-	}
-
-public:
-	void addLight(Light* light);
-
-	std::vector<Light*>& getLights() { return m_lights; }
-
-private:
-	std::vector<Light*> m_lights;
+	glm::vec3 m_position = glm::vec3(0.0f);
+	glm::vec3 m_color = glm::vec3(0.0f);
+	float m_intensity = 1.0f;
+	float m_radius = 1.0f;
 };

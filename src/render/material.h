@@ -36,7 +36,7 @@ private:
 	std::shared_ptr<Texture2D> m_tex_albedo;
 	std::shared_ptr<Texture2D> m_tex_normal;
 
-	ShaderProgram* m_shader_prog;
+	ShaderProgram* m_shaderProgram;
 
 	bool m_clamp_edge;
 	bool m_transparent;

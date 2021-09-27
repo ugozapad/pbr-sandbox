@@ -2,78 +2,13 @@
 
 out vec4 fragColor;
 
-in vec3 v_fragPos;
-in vec3 v_normal; // translated model normal
-in vec2 v_texcoord;
+varying vec3 v_worldPos;
+varying vec3 v_normal;
+varying vec2 v_texcoord;
 
-uniform vec3 u_cameraPosition; 
-uniform vec3 u_lightPos;
-uniform vec3 u_lightColor;
-uniform vec3 u_objectColor;
-uniform sampler2D u_tex0;
-
-vec3 calcLightLambert()
-{
-	// ambient color
-	float ambientStrength = 0.1;
-	vec3 ambient = ambientStrength * u_lightColor;
-	
-	// diffuse
-	vec3 n = normalize( v_normal );
-	vec3 ld = normalize( u_lightPos - v_fragPos );
-	
-	float diff = max( dot( n, ld ), 0.0 );
-	vec3 diffuse = diff * u_lightColor;
-	
-	return ambient + diffuse;
-}
-
-vec3 calcLightLambertWrapAround()
-{
-	const float factor = 0.2;
-
-	// ambient color
-	float ambientStrength = 0.1;
-	vec3 ambient = ambientStrength * u_lightColor;
-	
-	// diffuse
-	vec3 n = normalize( v_normal );
-	vec3 ld = normalize( u_lightPos - v_fragPos );
-	
-	float diff = max( dot ( n, ld ) + factor, 0.0 ) / ( 1.0 + factor );
-	vec3 diffuse = diff * u_lightColor;
-	
-	return ambient + diffuse;
-}
-
-vec3 calcLightPhong()
-{
-	// ambient color
-	float ambientStrength = 0.1;
-	vec3 ambient = ambientStrength * u_lightColor;
-	
-	// diffuse
-	vec3 n = normalize( v_normal );
-	vec3 ld = normalize( u_lightPos - v_fragPos );
-	
-	float diff = max( dot( n, ld ), 0.0 );
-	vec3 diffuse = diff * u_lightColor;
-	
-	// specular
-	float specularStrength = 0.5;
-	vec3 viewDir = normalize(u_cameraPosition - v_fragPos);
-	vec3 reflectDir = reflect(-ld, n);  
-	
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-	vec3 specular = specularStrength * spec * u_lightColor;  
-	
-	return ambient + diffuse + specular;
-}
+uniform sampler2D u_albedoSampler;
 
 void main()
 {
-	vec3 color = texture( u_tex0, v_texcoord ).rgb;
-	color += calcLightLambertWrapAround();
-	
-	fragColor = vec4( color, 0.0 );
+	fragColor = texture(u_albedoSampler, v_texcoord);
 }

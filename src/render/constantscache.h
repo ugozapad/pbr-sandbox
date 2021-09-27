@@ -19,7 +19,7 @@ public:
 	void setModel(const glm::mat4& mat);
 	glm::mat4 getModel() { return m_modelMatrix; }
 	glm::mat4 getInversedModelMatrix() { return m_inversedModelMatrix; }
-	glm::mat4 getNormalMatrix() { return m_normalMatrix; }
+	glm::mat3 getNormalMatrix() { return m_normalMatrix; }
 
 	void setCameraPos(const glm::vec3& pos) { m_cam_pos = pos; }
 	glm::vec3 getCameraPos() { return m_cam_pos; }
@@ -32,7 +32,7 @@ private:
 	// MODEL
 	glm::mat4 m_modelMatrix;
 	glm::mat4 m_inversedModelMatrix;
-	glm::mat4 m_normalMatrix;
+	glm::mat3 m_normalMatrix;
 
 	glm::vec3 m_cam_pos;
 };

@@ -69,6 +69,11 @@ void ShaderProgram::setTextureSampler(int slot, const char* name)
 	glUniform1i(get_uniform_location(name), slot);
 }
 
+void ShaderProgram::setFloat(const char* uniformName, float value)
+{
+	glUniform1f(get_uniform_location(uniformName), value);
+}
+
 void ShaderProgram::set_vector2(const char* uniform_name, const glm::vec2& vector)
 {
 	glUniform2fv(get_uniform_location(uniform_name), 1, glm::value_ptr(vector));
@@ -79,12 +84,18 @@ void ShaderProgram::setVector3(const char* uniform_name, const glm::vec3& vector
 	glUniform3fv(get_uniform_location(uniform_name), 1, glm::value_ptr(vector));
 }
 
+void ShaderProgram::setVector3(const char* uniform_name, float x, float y, float z)
+{
+	glm::vec3 vector = glm::vec3(x, y, z);
+	glUniform3fv(get_uniform_location(uniform_name), 1, glm::value_ptr(vector));
+}
+
 void ShaderProgram::set_vector4(const char* uniform_name, const glm::vec4& vector)
 {
 	glUniform4fv(get_uniform_location(uniform_name), 1, glm::value_ptr(vector));
 }
 
-void ShaderProgram::set_matrix3(const char* uniform_name, const glm::mat3& matrix)
+void ShaderProgram::setMatrix3(const char* uniform_name, const glm::mat3& matrix)
 {
 	glUniformMatrix3fv(get_uniform_location(uniform_name), 1, GL_FALSE, glm::value_ptr(matrix));
 }
