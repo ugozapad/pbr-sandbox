@@ -19,7 +19,7 @@ void Camera::update(MovmentDir dir, float x, float y, int width, int height, flo
 	static float lastX = (float)width / 2.0;
 	static float lastY = (float)height / 2.0;
 
-	const float sensitivity = 0.3f;
+	const float sensitivity = 0.2f;
 
 	float xoffset = x - lastX;
 	float yoffset = lastY - y; // reversed since y-coordinates go from bottom to top

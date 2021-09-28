@@ -25,7 +25,7 @@ struct AppPrivate
 	VertexBuffer* m_vertex_buffer;
 	IndexBuffer* m_index_buffer;
 	ShaderProgram* m_shader_prog;
-	RenderDevice* m_render_device;
+	RenderDevice* m_renderDevice;
 	Scene* m_sponzaScene;
 
 	std::shared_ptr<Texture2D> m_texture;
@@ -36,7 +36,7 @@ struct AppPrivate
 
 	void create()
 	{
-		m_render_device = RenderDevice::getInstance();
+		m_renderDevice = RenderDevice::getInstance();
 
 		float vertices[] = {
 			// positions          // colors           // texture coords
@@ -46,14 +46,14 @@ struct AppPrivate
 			-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
 		};
 
-		m_vertex_buffer = m_render_device->createVertexBuffer(vertices, sizeof(vertices), BufferAccess::Static);
+		m_vertex_buffer = m_renderDevice->createVertexBuffer(vertices, sizeof(vertices), BufferAccess::Static);
 
 		unsigned int indices[] = {
 			0, 1, 3, // first triangle
 			1, 2, 3  // second triangle
 		};
 
-		m_index_buffer = m_render_device->createIndexBuffer(indices, sizeof(indices), BufferAccess::Static);
+		m_index_buffer = m_renderDevice->createIndexBuffer(indices, sizeof(indices), BufferAccess::Static);
 
 		m_shader_prog = ShaderProgramManager::getInstance().createProgram("test", "data/test.vsh", "data/test.psh");
 
@@ -69,7 +69,7 @@ struct AppPrivate
 		m_texture.reset();
 
 		//ShaderProgramManager::get_instance().delete_program(m_shader_prog);
-		m_render_device->deleteVertexBuffer(m_vertex_buffer);
+		m_renderDevice->deleteVertexBuffer(m_vertex_buffer);
 	}
 
 	void update(float dt)
@@ -120,13 +120,13 @@ struct AppPrivate
 
 	void render()
 	{
-		m_render_device->clear(RenderDevice::CLEAR_COLOR | RenderDevice::CLEAR_DEPTH);
+		m_renderDevice->clear(RenderDevice::CLEAR_COLOR | RenderDevice::CLEAR_DEPTH);
 
 		glEnable(GL_DEPTH_TEST);
 
 		//m_texture->bind(0);
 
-		//m_render_device->set_vertex_buffer(m_vertex_buffer);
+		//m_render_device->setVertexBuffer(m_vertex_buffer);
 
 		//// position attribute
 		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -140,19 +140,19 @@ struct AppPrivate
 		//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 		//glEnableVertexAttribArray(2);
 
-		//m_render_device->set_index_buffer(m_index_buffer);
+		//m_render_device->setIndexBuffer(m_index_buffer);
 
-		//ShaderProgramManager::get_instance().set_shader_program(m_shader_prog);
+		//ShaderProgramManager::getInstance().setShaderProgram(m_shader_prog);
 
 		//// set matrices
 		//glm::mat4 model = glm::mat4(1.0f);
-		//model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		//model = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
 
 		//glm::mat4 mvp = glm::identity<glm::mat4>();
 		//mvp = m_proj * m_camera.get_view_matr() * model;
-		//m_shader_prog->set_matrix4("u_mvp", mvp);
+		//m_shader_prog->setMatrix4("u_mvp", mvp);
 
-		//m_render_device->draw_elements(PM_TRIANGLES, 6);
+		//m_render_device->drawElements(PM_TRIANGLES, 6);
 
 		m_sponzaScene->draw();
 	}
@@ -204,6 +204,7 @@ void App::init()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 	m_window = glfwCreateWindow(1600, 900, "pbr-sandbox", nullptr, nullptr);
+	glfwSetWindowPos(m_window, 0, 0);
 	glfwMakeContextCurrent(m_window);
 
 	gladLoadGL();

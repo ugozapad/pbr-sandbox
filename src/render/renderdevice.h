@@ -4,6 +4,7 @@
 
 class VertexBuffer;
 class IndexBuffer;
+class ConstantBuffer;
 
 class RenderDevice
 {
@@ -31,7 +32,11 @@ public:
 	IndexBuffer* createIndexBuffer(void* data, size_t size, BufferAccess access);
 	void deleteIndexBuffer(IndexBuffer* buffer);
 
+	ConstantBuffer* createConstantBuffer(void* data, size_t size, BufferAccess access);
+	void deleteConstantBuffer(ConstantBuffer* buffer);
+
 	// set
 	void setVertexBuffer(VertexBuffer* buffer);
 	void setIndexBuffer(IndexBuffer* buffer);
+	void setConstantBuffer(int slot, ConstantBuffer* buffer);
 };

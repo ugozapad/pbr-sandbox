@@ -1,6 +1,7 @@
 #include "render/renderdevice.h"
 #include "render/vertexbuffer.h"
 #include "render/indexbuffer.h"
+#include "render/constantbuffer.h"
 
 #include "glad/glad.h"
 
@@ -65,7 +66,7 @@ void RenderDevice::drawElements(PrimMode mode, int count)
 		gl_mode = GL_TRIANGLE_STRIP;
 		break;
 	default:
-		spdlog::error("RenderDevice::draw_elements: unknowed primitive mode");
+		spdlog::error("RenderDevice::drawElements: unknowed primitive mode");
 		break;
 	}
 
@@ -94,6 +95,17 @@ void RenderDevice::deleteIndexBuffer(IndexBuffer* buffer)
 		delete buffer;
 }
 
+ConstantBuffer* RenderDevice::createConstantBuffer(void* data, size_t size, BufferAccess access)
+{
+	return new ConstantBuffer(data, size);
+}
+
+void RenderDevice::deleteConstantBuffer(ConstantBuffer* buffer)
+{
+	if (buffer)
+		delete buffer;
+}
+
 void RenderDevice::setVertexBuffer(VertexBuffer* buffer)
 {
 	if (buffer)
@@ -108,4 +120,12 @@ void RenderDevice::setIndexBuffer(IndexBuffer* buffer)
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->m_buffer);
 	else
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void RenderDevice::setConstantBuffer(int slot, ConstantBuffer* buffer)
+{
+	if (buffer)
+		glBindBufferBase(GL_UNIFORM_BUFFER, slot, buffer->m_buffer);
+	else 
+		glBindBufferBase(GL_UNIFORM_BUFFER, slot, 0);
 }

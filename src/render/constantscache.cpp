@@ -7,7 +7,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/matrix_operation.hpp>
 
-
 void ShaderConstantCache::setModel(const glm::mat4& mat)
 {
 	m_modelMatrix = mat;

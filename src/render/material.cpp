@@ -4,7 +4,11 @@
 #include "render/constantscache.h"
 #include "render/renderdevice.h"
 
+#include "render/glad/include/glad/glad.h"
+
 #include "app/resource_manager.h"
+
+#include <spdlog/spdlog.h>
 
 void Material::init(const MaterialCreationInfo& info)
 {
@@ -12,13 +16,15 @@ void Material::init(const MaterialCreationInfo& info)
 	if (info.m_albedo_filename)
 		m_tex_albedo = resmgr.createResource<Texture2D>(info.m_albedo_filename);
 
-	//if (info.m_normal_filename)
-	//	m_tex_normal = resmgr.create_resource<Texture2D>(info.m_normal_filename);
+	if (info.m_normal_filename)
+		m_tex_normal = resmgr.createResource<Texture2D>(info.m_normal_filename);
 
 	m_clamp_edge = info.m_clamp_edge;
 	m_transparent = info.m_transparent;
 
 	m_shaderProgram = ShaderProgramManager::getInstance().createProgram("model", "data/model.vsh", "data/model.psh");
+
+
 }
 
 void Material::release()
@@ -33,14 +39,14 @@ void Material::bind()
 	m_tex_albedo->bind(0);
 	m_shaderProgram->setTextureSampler(0, "u_albedoSampler");
 
-}
+	if (m_tex_normal) {
+		m_tex_normal->bind(1);
+		m_shaderProgram->setTextureSampler(1, "u_normalSampler");
+	}
 
-glm::vec3 pointLightPositions[] = {
-	glm::vec3(0.7f,  0.2f,  2.0f),
-	glm::vec3(2.3f, -3.3f, -4.0f),
-	glm::vec3(-4.0f,  2.0f, -12.0f),
-	glm::vec3(0.0f,  0.0f, -3.0f)
-};
+	//uint32_t uniformBlockLocation = glGetUniformBlockIndex(m_shaderProgram->m_program, "PointLight");
+	//spdlog::info("{}", uniformBlockLocation);
+}
 
 void Material::render(size_t vertices_nbr, const glm::mat4& model)
 {

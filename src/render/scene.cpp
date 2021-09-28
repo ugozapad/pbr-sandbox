@@ -1,6 +1,21 @@
 #include "render/scene.h"
 
+#include "render/constantbuffer.h"
+#include "render/renderdevice.h"
+
 #include <spdlog/spdlog.h>
+
+struct PointLightsConstantBuffer
+{
+	glm::vec3 position;
+	glm::vec3 color;
+
+	void init()
+	{
+		position = glm::vec3(0.0f);
+		color = glm::vec3(1.0f);
+	}
+};
 
 Scene* Scene::createFromFile(const char* filename)
 {
@@ -24,6 +39,7 @@ Scene* Scene::createFromFile(const char* filename)
 Scene::Scene(aiNode *node, const aiScene *scene)
 {
 	processNode(node, scene);
+	initSceneLights();
 }
 
 void Scene::processNode(aiNode *node, const aiScene *scene)
@@ -38,8 +54,26 @@ void Scene::processNode(aiNode *node, const aiScene *scene)
 	}
 }
 
+void Scene::initSceneLights()
+{
+	glm::vec3 pointLightPositions[] = {
+		glm::vec3(0.7f,  0.2f,  2.0f),
+		glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(-4.0f,  2.0f, -12.0f),
+		glm::vec3(0.0f,  0.0f, -3.0f)
+	};
+
+	for (int i = 0; i < 4; i++) {
+		PointLight pointLight;
+		pointLight.m_position = pointLightPositions[i];
+		
+		m_pointLights.push_back(pointLight);
+	}
+}
+
 Scene::~Scene()
 {
+
 	for (std::vector<Mesh*>::iterator it = m_meshes.begin(); it != m_meshes.end(); ++it) {
 		if (*it) {
 			delete *it;
@@ -50,6 +84,7 @@ Scene::~Scene()
 
 void Scene::draw()
 {
+
 	for (std::vector<Mesh*>::iterator it = m_meshes.begin(); it != m_meshes.end(); ++it) {
 		(*it)->render();
 	}

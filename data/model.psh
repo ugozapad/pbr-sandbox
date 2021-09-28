@@ -7,6 +7,21 @@ varying vec3 v_normal;
 varying vec2 v_texcoord;
 
 uniform sampler2D u_albedoSampler;
+uniform sampler2D u_normalSampler;
+
+struct PointLight
+{
+	vec3 position;
+	vec3 color;
+};
+
+layout (std140) uniform PointLightBuffer
+{
+    PointLight pointLightBuffer[]; 
+};
+
+// light count
+uniform int u_pointLightsCount;
 
 void main()
 {
