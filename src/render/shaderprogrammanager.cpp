@@ -3,9 +3,14 @@
 
 #include "glad/glad.h"
 
+#include <spdlog/spdlog.h>
+
 void ShaderProgramManager::init()
 {
+	int maxVertexUniformBlocks = 0;
+	glGetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, &maxVertexUniformBlocks);
 
+	spdlog::info("max vertex uniform blocks {}", maxVertexUniformBlocks);
 }
 
 void ShaderProgramManager::shutdown()
