@@ -1,4 +1,4 @@
-#version 330 core
+#version 460 core
 
 out vec4 fragColor;
 
@@ -15,10 +15,11 @@ struct PointLight
 	vec3 color;
 };
 
-layout(std140) uniform PointLightBuffer
+layout (std430, binding = 0) buffer PointLightBuffer
 {
-    PointLight pointLightBuffer[]; 
+	PointLight pointLights[];
 };
+
 
 // light count
 uniform int u_pointLightsCount;

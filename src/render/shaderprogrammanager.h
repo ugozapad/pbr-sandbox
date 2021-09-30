@@ -21,7 +21,7 @@ public:
 	void setShaderProgram(ShaderProgram* program);
 
 	ShaderProgram* createProgram(const char* name, const char* vsfilename, const char* fsfilename);
-	void delete_program(ShaderProgram* program);
+	void deleteProgram(ShaderProgram* program);
 
 private:
 	std::vector<ShaderProgram*> m_programs;

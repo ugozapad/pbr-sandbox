@@ -22,5 +22,4 @@ private:
 	std::vector<PointLight> m_pointLights;
 
 	ConstantBuffer* m_lightCb;
-
 };

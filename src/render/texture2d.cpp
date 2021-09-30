@@ -36,6 +36,11 @@ uint32_t get_gl_format(ImageFormat format)
 	return 0;
 }
 
+void Texture2D::unbind(int slot)
+{
+	glBindTextureUnit(slot, 0);
+}
+
 void Texture2D::init_from_memory(void* data, int width, int height, ImageFormat format)
 {
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_texture_handle);

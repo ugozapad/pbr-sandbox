@@ -4,6 +4,8 @@
 
 #include <vector>
 
+#define MAX_LIGHTS 128
+
 struct PointLight
 {
 	glm::vec3 m_position = glm::vec3(0.0f);

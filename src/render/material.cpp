@@ -66,5 +66,15 @@ void Material::render(size_t vertices_nbr, const glm::mat4& model)
 	m_shaderProgram->setMatrix3("u_normalMatrix", cache.getNormalMatrix());
 	m_shaderProgram->setVector3("u_cameraPosition", cache.getCameraPos());
 
-	RenderDevice::getInstance()->drawElements(PM_TRIANGLES, vertices_nbr);
+	static RenderDevice& device = *RenderDevice::getInstance();
+	device.drawElements(PM_TRIANGLES, vertices_nbr);
+
+	unbindDeviceStateAfterRender();
+}
+
+void Material::unbindDeviceStateAfterRender()
+{
+	for (int i = 0; i < 6; i++) {
+		Texture2D::unbind(i);
+	}
 }

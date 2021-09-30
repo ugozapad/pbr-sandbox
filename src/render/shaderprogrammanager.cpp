@@ -9,7 +9,6 @@ void ShaderProgramManager::init()
 {
 	int maxVertexUniformBlocks = 0;
 	glGetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, &maxVertexUniformBlocks);
-
 	spdlog::info("max vertex uniform blocks {}", maxVertexUniformBlocks);
 }
 
@@ -17,7 +16,7 @@ void ShaderProgramManager::shutdown()
 {
 	for (std::vector<ShaderProgram*>::iterator it = m_programs.begin(); it != m_programs.end(); ++it)
 		if (*it)
-			delete_program(*it);
+			deleteProgram(*it);
 
 	m_programs.clear();
 }
@@ -42,7 +41,7 @@ ShaderProgram* ShaderProgramManager::createProgram(const char* name, const char*
 	return program;
 }
 
-void ShaderProgramManager::delete_program(ShaderProgram* program)
+void ShaderProgramManager::deleteProgram(ShaderProgram* program)
 {
 	if (program) {
 		delete program;

@@ -33,6 +33,9 @@ public:
 	void render(size_t vertices_nbr, const glm::mat4& model);
 
 private:
+	void unbindDeviceStateAfterRender();
+
+private:
 	std::shared_ptr<Texture2D> m_tex_albedo;
 	std::shared_ptr<Texture2D> m_tex_normal;
 
