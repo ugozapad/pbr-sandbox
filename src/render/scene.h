@@ -8,6 +8,8 @@ class ConstantBuffer;
 class Scene
 {
 public:
+	static int ms_lightsCount;
+public:
 	static Scene* createFromFile(const char* filename);
 private:
 	Scene(aiNode *node, const aiScene *scene);

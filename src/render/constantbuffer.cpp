@@ -13,7 +13,7 @@ ConstantBuffer::~ConstantBuffer()
 	glDeleteBuffers(1, &m_buffer);
 }
 
-void ConstantBuffer::updateResourceData(void* data, size_t size)
+void ConstantBuffer::updateSubresourceData(void* data, size_t size)
 {
 	glNamedBufferSubData(m_buffer, 0, size, data);
 }

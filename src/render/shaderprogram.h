@@ -14,6 +14,7 @@ private:
 	~ShaderProgram();
 public:
 	void setTextureSampler(int slot, const char* name);
+	void setInteger(const char* uniformName, int value);
 	void setFloat(const char* uniformName, float value);
 
 	void setVector2(const char* uniform_name, const glm::vec2& vector);

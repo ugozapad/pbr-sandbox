@@ -69,6 +69,11 @@ void ShaderProgram::setTextureSampler(int slot, const char* name)
 	glUniform1i(getUniformLocation(name), slot);
 }
 
+void ShaderProgram::setInteger(const char* uniformName, int value)
+{
+	glUniform1i(getUniformLocation(uniformName), value);
+}
+
 void ShaderProgram::setFloat(const char* uniformName, float value)
 {
 	glUniform1f(getUniformLocation(uniformName), value);

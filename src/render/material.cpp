@@ -3,6 +3,7 @@
 #include "render/shaderprogrammanager.h"
 #include "render/constantscache.h"
 #include "render/renderdevice.h"
+#include "render/scene.h"
 
 #include "render/glad/include/glad/glad.h"
 
@@ -43,6 +44,8 @@ void Material::bind()
 		m_tex_normal->bind(1);
 		m_shaderProgram->setTextureSampler(1, "u_normalSampler");
 	}
+
+	m_shaderProgram->setInteger("u_pointLightsCount", Scene::ms_lightsCount);
 
 	//uint32_t uniformBlockLocation = glGetUniformBlockIndex(m_shaderProgram->m_program, "PointLight");
 	//spdlog::info("{}", uniformBlockLocation);

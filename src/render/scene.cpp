@@ -13,9 +13,11 @@ struct PointLightsConstantBuffer
 	void init()
 	{
 		position = glm::vec3(0.0f);
-		color = glm::vec3(1.0f);
+		color = glm::vec3(0.3f);
 	}
 };
+
+int Scene::ms_lightsCount = 0;
 
 Scene* Scene::createFromFile(const char* filename)
 {
@@ -69,10 +71,13 @@ void Scene::initSceneLights()
 		
 		m_pointLights.push_back(pointLight);
 	}
+
+	m_lightCb = RenderDevice::getInstance()->createConstantBuffer(0, sizeof(PointLightsConstantBuffer) * MAX_LIGHTS, BufferAccess::Dynamic);
 }
 
 Scene::~Scene()
 {
+	RenderDevice::getInstance()->deleteConstantBuffer(m_lightCb);
 
 	for (std::vector<Mesh*>::iterator it = m_meshes.begin(); it != m_meshes.end(); ++it) {
 		if (*it) {
@@ -84,6 +89,20 @@ Scene::~Scene()
 
 void Scene::draw()
 {
+	ms_lightsCount = m_pointLights.size();
+
+	std::vector<PointLightsConstantBuffer> constantBufferVector;
+	for (auto it : m_pointLights) {
+		PointLightsConstantBuffer cbdata;
+		cbdata.position = it.m_position;
+		cbdata.color = it.m_color;
+
+		constantBufferVector.push_back(cbdata);
+	}
+
+	m_lightCb->updateSubresourceData(constantBufferVector.data(), constantBufferVector.size());
+
+	RenderDevice::getInstance()->setConstantBuffer(0, m_lightCb);
 
 	for (std::vector<Mesh*>::iterator it = m_meshes.begin(); it != m_meshes.end(); ++it) {
 		(*it)->render();

@@ -15,7 +15,8 @@ uniform mat4 u_mvp;
 void main()
 {
 	v_worldPos = vec4(u_model * vec4(position, 1.0)).xyz;
-	v_normal = u_normalMatrix * normal;
+	//v_normal = u_normalMatrix * normal;
+	v_normal = normal;
 	v_texcoord = texcoord;
 	
 	gl_Position = u_mvp * vec4(position, 1.0);
