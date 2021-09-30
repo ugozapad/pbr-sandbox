@@ -23,10 +23,7 @@ void ShaderProgramManager::shutdown()
 
 void ShaderProgramManager::setShaderProgram(ShaderProgram* program)
 {
-	if (program)
-		glUseProgram(program->m_program);
-	else
-		glUseProgram(0);
+	glUseProgram(program ? program->m_program : 0);
 }
 
 ShaderProgram* ShaderProgramManager::createProgram(const char* name, const char* vsfilename, const char* fsfilename)
