@@ -118,5 +118,6 @@ void RenderDevice::setIndexBuffer(IndexBuffer* buffer)
 
 void RenderDevice::setConstantBuffer(int slot, ConstantBuffer* buffer)
 {
-	glBindBufferBase(GL_UNIFORM_BUFFER, slot, buffer ? buffer->m_buffer : 0);
+	//glBindBufferBase(GL_UNIFORM_BUFFER, slot, buffer ? buffer->m_buffer : 0);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, slot, buffer ? buffer->m_buffer : 0);
 }
