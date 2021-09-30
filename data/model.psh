@@ -15,11 +15,12 @@ struct PointLight
 	vec3 color;
 };
 
+#define MAX_LIGHTS 128
+
 layout (std430, binding = 0) buffer PointLightBuffer
 {
-	PointLight pointLights[];
+	PointLight pointLights[MAX_LIGHTS];
 };
-
 
 // light count
 uniform int u_pointLightsCount;
