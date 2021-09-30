@@ -108,24 +108,15 @@ void RenderDevice::deleteConstantBuffer(ConstantBuffer* buffer)
 
 void RenderDevice::setVertexBuffer(VertexBuffer* buffer)
 {
-	if (buffer)
-		glBindBuffer(GL_ARRAY_BUFFER, buffer->m_buffer);
-	else
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer ? buffer->m_buffer : 0);
 }
 
 void RenderDevice::setIndexBuffer(IndexBuffer* buffer)
 {
-	if (buffer)
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->m_buffer);
-	else
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer ? buffer->m_buffer : 0);
 }
 
 void RenderDevice::setConstantBuffer(int slot, ConstantBuffer* buffer)
 {
-	if (buffer)
-		glBindBufferBase(GL_UNIFORM_BUFFER, slot, buffer->m_buffer);
-	else 
-		glBindBufferBase(GL_UNIFORM_BUFFER, slot, 0);
+	glBindBufferBase(GL_UNIFORM_BUFFER, slot, buffer ? buffer->m_buffer : 0);
 }
