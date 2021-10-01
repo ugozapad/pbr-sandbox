@@ -7,14 +7,8 @@
 
 struct PointLightsConstantBuffer
 {
-	glm::vec3 position;
-	glm::vec3 color;
-
-	void init()
-	{
-		position = glm::vec3(0.0f);
-		color = glm::vec3(0.3f);
-	}
+	glm::vec4 position;
+	glm::vec4 color;
 };
 
 int Scene::ms_lightsCount = 0;
@@ -94,8 +88,8 @@ void Scene::draw()
 	std::vector<PointLightsConstantBuffer> constantBufferVector;
 	for (auto it : m_pointLights) {
 		PointLightsConstantBuffer cbdata;
-		cbdata.position = it.m_position;
-		cbdata.color = it.m_color;
+		cbdata.position = glm::vec4(it.m_position, 1.0f);
+		cbdata.color = glm::vec4(it.m_color, 1.0f);
 
 		constantBufferVector.push_back(cbdata);
 	}
