@@ -9,7 +9,7 @@ class ConstantBuffer
 	friend class RenderDevice;
 
 public:
-	void updateSubresourceData(void* data, size_t size);
+	void updateSubresource(void* data, size_t size);
 
 private:
 	ConstantBuffer(void* dataBuffer, size_t size);

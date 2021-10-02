@@ -236,8 +236,6 @@ void App::shutdown()
 
 void App::run()
 {
-	RenderDevice* render_device = RenderDevice::getInstance();
-
 	float startTime = glfwGetTime();
 	float endTime = glfwGetTime();
 

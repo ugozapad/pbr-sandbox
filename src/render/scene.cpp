@@ -94,7 +94,7 @@ void Scene::draw()
 		constantBufferVector.push_back(cbdata);
 	}
 
-	m_lightCb->updateSubresourceData(constantBufferVector.data(), constantBufferVector.size());
+	m_lightCb->updateSubresource(constantBufferVector.data(), constantBufferVector.size());
 
 	RenderDevice::getInstance()->setConstantBuffer(0, m_lightCb);
 
