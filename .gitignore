@@ -1,0 +1,9 @@
+.vs
+.vscode
+out
+bin
+build
+output
+engine.ini
+engine_output.txt
+imgui.ini
