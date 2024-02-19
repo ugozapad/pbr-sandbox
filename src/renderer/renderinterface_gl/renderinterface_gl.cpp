@@ -6,6 +6,7 @@
 #include "renderer/renderinterface_gl/vertex_buffer_gl.h"
 #include "renderer/renderinterface_gl/index_buffer_gl.h"
 #include "renderer/renderinterface_gl/shader_program_gl.h"
+#include "renderer/renderinterface_gl/texture2d_gl.h"
 
 void APIENTRY RenderDebugOutput(GLenum source, GLenum type, unsigned int id,
 	GLenum severity, GLsizei length, const char* message, const void* userParam)
@@ -94,6 +95,32 @@ void RenderInterface_GL::EnableVSync(bool value)
 void RenderInterface_GL::Present()
 {
 	SDL_GL_SwapWindow(m_window);
+}
+
+Texture2D* RenderInterface_GL::CreateTexture2D(int width, int height, void* data, PixelFormat pixelFormat, bool generateMips)
+{
+	Texture2D_GL* texture = new Texture2D_GL();
+	texture->CreateRaw(data, width, height, pixelFormat);
+
+	if (generateMips)
+		texture->GenerateMipmaps();
+
+	return texture;
+}
+
+void RenderInterface_GL::SetTexture2D(Texture2D* texture, int slot)
+{
+	if (texture)
+	{
+		Texture2D_GL* texture_gl = (Texture2D_GL*)texture;
+		glActiveTexture(GL_TEXTURE0 + slot);
+		glBindTexture(GL_TEXTURE_2D, texture_gl->getHandle());
+	}
+	else
+	{
+		glActiveTexture(GL_TEXTURE0 + slot);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 }
 
 VertexBuffer* RenderInterface_GL::CreateVertexBuffer(const void* data, int size, int stride, bool dynamic)

@@ -21,6 +21,9 @@ public:
 	void EnableVSync(bool value) override;
 	void Present() override;
 
+	Texture2D* CreateTexture2D(int width, int height, void* data, PixelFormat pixelFormat, bool generateMips = false) override;
+	void SetTexture2D(Texture2D* texture, int slot) override;
+
 	VertexBuffer* CreateVertexBuffer(const void* data, int size, int stride, bool dynamic) override;
 	IndexBuffer* CreateIndexBuffer(const void* data, int size, bool dynamic) override;
 	void SetVertexBuffer(VertexBuffer* buffer) override;

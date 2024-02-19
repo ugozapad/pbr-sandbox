@@ -3,6 +3,19 @@
 
 struct SDL_Window;
 
+// texture format
+enum PixelFormat
+{
+	PF_UNKNOWN,
+	PF_R8G8B8,
+	PF_R8G8B8A8,
+	PF_R8G8B8F,
+	PF_R8G8B8A8F,
+
+	// Depth formats
+	PF_DEPTH32F
+};
+
 enum PrimitiveType
 {
 	PT_POINTS,
@@ -30,6 +43,13 @@ struct ShaderDescriptor
 	}
 };
 
+struct SurfaceDescriptor
+{
+	int width;
+	int height;
+	PixelFormat format;
+};
+
 class VertexBuffer
 {
 public:
@@ -50,6 +70,15 @@ public:
 	virtual ~ShaderProgram() = default;
 };
 
+class Texture2D
+{
+public:
+	virtual ~Texture2D() = default;
+
+	virtual void GenerateMipmaps() = 0;
+	virtual PixelFormat GetPixelFormat() = 0;
+};
+
 class RenderInterface
 {
 public:
@@ -63,6 +92,9 @@ public:
 
 	virtual void EnableVSync(bool value) = 0;
 	virtual void Present() = 0;
+
+	virtual Texture2D* CreateTexture2D(int width, int height, void* data, PixelFormat pixelFormat, bool generateMips = false) = 0;
+	virtual void SetTexture2D(Texture2D* texture, int slot) = 0;
 
 	virtual VertexBuffer* CreateVertexBuffer(const void* data, int size, int stride, bool dynamic) = 0;
 	virtual IndexBuffer* CreateIndexBuffer(const void* data, int size, bool dynamic) = 0;
