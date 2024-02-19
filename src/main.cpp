@@ -6,6 +6,8 @@
 #include "core/filemanager.h"
 #include "renderer/renderinterface.h"
 
+#include "inputmanager.h"
+
 class ShaderManager
 {
 public:
@@ -110,8 +112,21 @@ int main(int argc, char* argv[])
 			case SDL_QUIT:
 				exitRequested = true;
 				break;
+
+			// Input stuff
+			case SDL_KEYDOWN:
+				InputManager::instance->OnKeyboardAction(event.key.keysym.scancode, true);
+				break;
+			case SDL_KEYUP:
+				InputManager::instance->OnKeyboardAction(event.key.keysym.scancode, false);
+				break;
+			case SDL_MOUSEMOTION:
+				InputManager::instance->OnMousePosAction(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
+				break;
 			}
 		}
+
+		InputManager::instance->update();
 
 		renderInterface->BeginFrame();
 		renderInterface->EndFrame();
