@@ -20,6 +20,9 @@ Texture2D_GL::Texture2D_GL()
 
 Texture2D_GL::~Texture2D_GL()
 {
+	if (m_handle >= 0)
+		Destroy();
+
 	m_pf = PF_UNKNOWN;
 	m_width = 0;
 	m_height = 0;
@@ -122,6 +125,11 @@ void Texture2D_GL::CreateRaw(void* data, int width, int height, PixelFormat pf)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Texture2D_GL::Destroy()
+{
+	glDeleteTextures(1, &m_handle);
 }
 
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
