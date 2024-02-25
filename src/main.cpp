@@ -8,6 +8,9 @@
 
 #include "inputmanager.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/matrix_operation.hpp>
+
 class ShaderManager
 {
 public:
@@ -55,6 +58,38 @@ ShaderProgram* ShaderManager::Create(const char* vertexFilename, const char* pix
 	return renderInterface->CreateShader(shaderDesc);
 }
 
+class SimpleShader
+{
+public:
+	SimpleShader();
+	~SimpleShader();
+
+	void Bind(const glm::mat4& modelViewProj);
+
+private:
+	ShaderProgram* m_shaderProgram;
+	uint32_t m_modelViewProjectionUniform;
+};
+
+SimpleShader::SimpleShader() :
+	m_shaderProgram(nullptr),
+	m_modelViewProjectionUniform(0)
+{
+	m_shaderProgram = ShaderManager::Create("data/test_mesh.vs", "data/test_mesh.ps");
+	m_modelViewProjectionUniform = m_shaderProgram->GetUniformLocation("u_modelViewProjection");
+}
+
+SimpleShader::~SimpleShader()
+{
+}
+
+void SimpleShader::Bind(const glm::mat4& modelViewProj)
+{
+	m_shaderProgram->SetMatrix4(m_modelViewProjectionUniform, modelViewProj);
+}
+
+static SimpleShader* g_simpleShader = nullptr;
+
 bool InitSDL()
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING ^ SDL_INIT_SENSOR) != 0)
@@ -101,6 +136,23 @@ int main(int argc, char* argv[])
 
 	ShaderProgram* shader = ShaderManager::Create("data/test.vs", "data/test.ps");
 
+	int width = 0, height = 0;
+	SDL_GetWindowSize(renderWindow, &width, &height);
+
+	float aspectRatio = (float)width / (float)height;
+
+	glm::mat4 projection = glm::perspective(glm::radians(75.0f), aspectRatio, 0.1f, 100.0f);
+
+	glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.0f),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f));
+
+	glm::mat4 model = glm::mat4(1.0f);
+
+	glm::mat4 modelViewProjection = projection * view * model;
+
+	uint32_t modelViewProjectionUniform = shader->GetUniformLocation("u_modelViewProjection");
+
 	bool exitRequested = false;
 	while (!exitRequested)
 	{
@@ -130,9 +182,12 @@ int main(int argc, char* argv[])
 
 		renderInterface->BeginFrame();
 		renderInterface->EndFrame();
-
+	
 		renderInterface->SetVertexBuffer(vertexBuffer);
+
 		renderInterface->SetShader(shader);
+		shader->SetMatrix4(modelViewProjectionUniform, modelViewProjection);
+
 		renderInterface->DrawArrays(PT_TRIANGLES, 0, 3);
 
 		renderInterface->Present();

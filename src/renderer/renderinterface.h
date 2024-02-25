@@ -1,6 +1,8 @@
 #ifndef RENDERINTERFACE_H
 #define RENDERINTERFACE_H
 
+#include <glm/glm.hpp>
+
 struct SDL_Window;
 
 // texture format
@@ -68,6 +70,15 @@ class ShaderProgram
 {
 public:
 	virtual ~ShaderProgram() = default;
+
+	// Uniform API
+	virtual uint32_t GetUniformLocation(const char* uniformName) = 0;
+	virtual void SetTextureSampler(int slot, const char* name) = 0;
+	virtual void SetInteger(int slot, int value) = 0;
+	virtual void SetFloat(int slot, float value) = 0;
+	virtual void SetVector3(int slot, const glm::vec3& vector) = 0;
+	virtual void SetMatrix4(int slot, const glm::mat4& matrix) = 0;
+
 };
 
 class Texture2D

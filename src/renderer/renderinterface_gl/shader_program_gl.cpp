@@ -6,6 +6,7 @@
 #include <string>
 #include "core/filemanager.h"
 #include "shader_program_gl.h"
+#include <glm/gtc/type_ptr.hpp>
 
 GLuint CreateShader(GLenum target, const char* filename, const char* defines = nullptr)
 {
@@ -153,4 +154,34 @@ void ShaderProgram_GL::Shutdown()
 GLuint ShaderProgram_GL::GetHandle()
 {
 	return m_program;
+}
+
+uint32_t ShaderProgram_GL::GetUniformLocation(const char* uniformName)
+{
+	return glGetUniformLocation(m_program, uniformName);
+}
+
+void ShaderProgram_GL::SetTextureSampler(int slot, const char* name)
+{
+	glUniform1i(GetUniformLocation(name), slot);
+}
+
+void ShaderProgram_GL::SetInteger(int slot, int value)
+{
+	glUniform1i(slot, value);
+}
+
+void ShaderProgram_GL::SetFloat(int slot, float value)
+{
+	glUniform1f(slot, value);
+}
+
+void ShaderProgram_GL::SetVector3(int slot, const glm::vec3& vector)
+{
+	glUniform3fv(slot, 1, glm::value_ptr(vector));
+}
+
+void ShaderProgram_GL::SetMatrix4(int slot, const glm::mat4& matrix)
+{
+	glUniformMatrix4fv(slot, 1, GL_FALSE, glm::value_ptr(matrix));
 }
