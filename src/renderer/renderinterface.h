@@ -122,13 +122,7 @@ public:
 class RenderFacade
 {
 public:
-	static RenderFacade* GetInstance();
-
-public:
-	RenderFacade();
-	~RenderFacade();
-
-	RenderInterface* GetRenderInterface();
+	static RenderInterface* GetRenderInterface();
 };
 
 #endif // !RENDERINTERFACE_H

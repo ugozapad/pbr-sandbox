@@ -64,7 +64,7 @@ void RenderInterface_GL::Init(SDL_Window* window)
 	glGenVertexArrays(1, &m_vao);
 	glBindVertexArray(m_vao);
 
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
 }
