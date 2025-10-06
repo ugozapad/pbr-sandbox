@@ -12,7 +12,7 @@ public:
 	void Init(const ShaderDescriptor& shaderDesc);
 	void Shutdown();
 
-	uint32_t GetUniformLocation(const char* uniformName);
+	int32_t GetUniformLocation(const char* uniformName);
 	void SetTextureSampler(int slot, const char* name);
 	void SetInteger(int slot, int value);
 	void SetFloat(int slot, float value);

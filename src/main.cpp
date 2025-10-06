@@ -23,14 +23,14 @@ public:
 
 private:
 	ShaderProgram* m_shaderProgram;
-	uint32_t m_modelViewProjectionUniform;
+	int32_t m_modelViewProjectionUniform;
 };
 
 SimpleShader::SimpleShader() :
 	m_shaderProgram(nullptr),
 	m_modelViewProjectionUniform(0)
 {
-	m_shaderProgram = ShaderManager::Create("data/test.vs", "data/test.ps");
+	m_shaderProgram = ShaderManager::Create("data/shaders/test.vs", "data/shaders/test.ps");
 
 	m_modelViewProjectionUniform = m_shaderProgram->GetUniformLocation("u_modelViewProjection");
 	SDL_assert(m_modelViewProjectionUniform != -1 && "Uniform u_modelViewProjection not found");

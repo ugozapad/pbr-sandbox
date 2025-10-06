@@ -156,7 +156,7 @@ GLuint ShaderProgram_GL::GetHandle()
 	return m_program;
 }
 
-uint32_t ShaderProgram_GL::GetUniformLocation(const char* uniformName)
+int32_t ShaderProgram_GL::GetUniformLocation(const char* uniformName)
 {
 	return glGetUniformLocation(m_program, uniformName);
 }
