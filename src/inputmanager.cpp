@@ -5,7 +5,7 @@
 #include "inputmanager.h"
 
 static InputManager s_InputManager;
-InputManager* InputManager::instance = &s_InputManager;
+InputManager* g_inputManager = &s_InputManager;
 
 InputManager::InputManager()
 {

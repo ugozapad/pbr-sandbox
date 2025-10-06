@@ -4,8 +4,9 @@
 #include <SDL.h>
 
 #include "core/filemanager.h"
-#include "renderer/renderinterface.h"
+#include "renderer/render.h"
 #include "renderer/shadermanager.h"
+#include "renderer/gl/render_gl.h"
 
 #include "inputmanager.h"
 
@@ -29,7 +30,7 @@ SimpleShader::SimpleShader() :
 	m_shaderProgram(nullptr),
 	m_modelViewProjectionUniform(0)
 {
-	m_shaderProgram = ShaderManager::Create("data/test_mesh.vs", "data/test_mesh.ps");
+	m_shaderProgram = ShaderManager::Create("data/test.vs", "data/test.ps");
 	m_modelViewProjectionUniform = m_shaderProgram->GetUniformLocation("u_modelViewProjection");
 }
 
@@ -39,6 +40,7 @@ SimpleShader::~SimpleShader()
 
 void SimpleShader::Bind(const glm::mat4& modelViewProj)
 {
+	g_render->SetShader(m_shaderProgram);
 	m_shaderProgram->SetMatrix4(m_modelViewProjectionUniform, modelViewProj);
 }
 
@@ -77,8 +79,7 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	RenderInterface* renderInterface = RenderFacade::GetRenderInterface();
-	renderInterface->Init(renderWindow);
+	g_render->Init(renderWindow);
 
 	float vertices[] = {
 		-0.5f, -0.5f, 0.0f,
@@ -86,9 +87,9 @@ int main(int argc, char* argv[])
 		 0.0f,  0.5f, 0.0f
 	};
 
-	VertexBuffer* vertexBuffer = renderInterface->CreateVertexBuffer(vertices, sizeof(vertices), sizeof(float) * 3, false);
+	Buffer* vertexBuffer = g_render->CreateBuffer(BT_VERTEX, vertices, sizeof(vertices), sizeof(float) * 3, false);
 
-	ShaderProgram* shader = ShaderManager::Create("data/test.vs", "data/test.ps");
+	SimpleShader* shader = new SimpleShader();
 
 	int width = 0, height = 0;
 	SDL_GetWindowSize(renderWindow, &width, &height);
@@ -100,8 +101,6 @@ int main(int argc, char* argv[])
 	glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.0f),
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
-
-	uint32_t modelViewProjectionUniform = shader->GetUniformLocation("u_modelViewProjection");
 
 	Uint32 startTicks = 0, endTicks = 0;
 
@@ -119,13 +118,13 @@ int main(int argc, char* argv[])
 
 			// Input stuff
 			case SDL_KEYDOWN:
-				InputManager::instance->OnKeyboardAction(event.key.keysym.scancode, true);
+				g_inputManager->OnKeyboardAction(event.key.keysym.sym, true);
 				break;
 			case SDL_KEYUP:
-				InputManager::instance->OnKeyboardAction(event.key.keysym.scancode, false);
+				g_inputManager->OnKeyboardAction(event.key.keysym.sym, false);
 				break;
 			case SDL_MOUSEMOTION:
-				InputManager::instance->OnMousePosAction(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
+				g_inputManager->OnMousePosAction(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
 				break;
 			}
 		}
@@ -143,25 +142,24 @@ int main(int argc, char* argv[])
 
 		glm::mat4 modelViewProjection = projection * view * model;
 
-		InputManager::instance->update();
+		g_inputManager->update();
 
-		renderInterface->BeginFrame();
-		renderInterface->EndFrame();
+		g_render->BeginFrame();
+		g_render->EndFrame();
 	
-		renderInterface->SetVertexBuffer(vertexBuffer);
+		g_render->SetVertexBuffer(vertexBuffer);
 
-		renderInterface->SetShader(shader);
-		shader->SetMatrix4(modelViewProjectionUniform, modelViewProjection);
+		shader->Bind(modelViewProjection);
 
-		renderInterface->DrawArrays(PT_TRIANGLES, 0, 3);
+		g_render->DrawArrays(PT_TRIANGLES, 0, 3);
 
-		renderInterface->Present();
+		g_render->Present();
 	}
 
 	delete shader;
 	delete vertexBuffer;
 
-	renderInterface->Shutdown();
+	g_render->Shutdown();
 
 	if (renderWindow)
 	{

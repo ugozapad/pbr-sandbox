@@ -2,11 +2,7 @@
 #include <stdio.h>
 #include <glad/glad.h>
 
-#include "renderer/renderinterface_gl/renderinterface_gl.h"
-#include "renderer/renderinterface_gl/vertex_buffer_gl.h"
-#include "renderer/renderinterface_gl/index_buffer_gl.h"
-#include "renderer/renderinterface_gl/shader_program_gl.h"
-#include "renderer/renderinterface_gl/texture2d_gl.h"
+#include "renderer/gl/render_gl.h"
 
 void APIENTRY RenderDebugOutput(GLenum source, GLenum type, unsigned int id,
 	GLenum severity, GLsizei length, const char* message, const void* userParam)
@@ -20,18 +16,18 @@ void APIENTRY RenderDebugOutput(GLenum source, GLenum type, unsigned int id,
 	printf("%s\n", longBuffer);
 }
 
-RenderInterface_GL::RenderInterface_GL() :
+Render_GL::Render_GL() :
 	m_window(nullptr),
 	m_gl_context(nullptr),
 	m_vao(-1)
 {
 }
 
-RenderInterface_GL::~RenderInterface_GL()
+Render_GL::~Render_GL()
 {
 }
 
-void RenderInterface_GL::Init(SDL_Window* window)
+void Render_GL::Init(SDL_Window* window)
 {
 	printf("Initializing renderer backend ...\n");
 
@@ -69,7 +65,7 @@ void RenderInterface_GL::Init(SDL_Window* window)
 	glCullFace(GL_BACK);
 }
 
-void RenderInterface_GL::Shutdown()
+void Render_GL::Shutdown()
 {
 	glBindVertexArray(0);
 	glDeleteVertexArrays(1, &m_vao);
@@ -77,27 +73,27 @@ void RenderInterface_GL::Shutdown()
 	SDL_GL_MakeCurrent(nullptr, nullptr);
 }
 
-void RenderInterface_GL::BeginFrame()
+void Render_GL::BeginFrame()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 }
 
-void RenderInterface_GL::EndFrame()
+void Render_GL::EndFrame()
 {
 }
 
-void RenderInterface_GL::EnableVSync(bool value)
+void Render_GL::EnableVSync(bool value)
 {
 	SDL_GL_SetSwapInterval(value);
 }
 
-void RenderInterface_GL::Present()
+void Render_GL::Present()
 {
 	SDL_GL_SwapWindow(m_window);
 }
 
-Texture2D* RenderInterface_GL::CreateTexture2D(int width, int height, void* data, PixelFormat pixelFormat, bool generateMips)
+Texture2D* Render_GL::CreateTexture2D(int width, int height, void* data, PixelFormat pixelFormat, bool generateMips)
 {
 	Texture2D_GL* texture = new Texture2D_GL();
 	texture->CreateRaw(data, width, height, pixelFormat);
@@ -108,13 +104,12 @@ Texture2D* RenderInterface_GL::CreateTexture2D(int width, int height, void* data
 	return texture;
 }
 
-void RenderInterface_GL::SetTexture2D(Texture2D* texture, int slot)
+void Render_GL::SetTexture2D(Texture2D* texture, int slot)
 {
 	if (texture)
 	{
-		Texture2D_GL* texture_gl = (Texture2D_GL*)texture;
 		glActiveTexture(GL_TEXTURE0 + slot);
-		glBindTexture(GL_TEXTURE_2D, texture_gl->getHandle());
+		glBindTexture(GL_TEXTURE_2D, texture->GetHandle());
 	}
 	else
 	{
@@ -123,21 +118,16 @@ void RenderInterface_GL::SetTexture2D(Texture2D* texture, int slot)
 	}
 }
 
-VertexBuffer* RenderInterface_GL::CreateVertexBuffer(const void* data, int size, int stride, bool dynamic)
+Buffer* Render_GL::CreateBuffer(BufferType type, const void* data, int size, int stride, bool dynamic)
 {
-	return new VertexBuffer_GL(data, size, stride, dynamic);
+	return new Buffer(type, data, size, stride, dynamic);
 }
 
-IndexBuffer* RenderInterface_GL::CreateIndexBuffer(const void* data, int size, bool dynamic)
-{
-	return new IndexBuffer_GL(data, size, dynamic);
-}
-
-void RenderInterface_GL::SetVertexBuffer(VertexBuffer* buffer)
+void Render_GL::SetVertexBuffer(Buffer* buffer)
 {
 	if (buffer)
 	{
-		gl_upcast(buffer)->Bind();
+		buffer->Bind();
 
 		// #TODO: Shader/Buffer input layout
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -149,11 +139,11 @@ void RenderInterface_GL::SetVertexBuffer(VertexBuffer* buffer)
 	}
 }
 
-void RenderInterface_GL::SetIndexBuffer(IndexBuffer* buffer)
+void Render_GL::SetIndexBuffer(Buffer* buffer)
 {
 	if (buffer)
 	{
-		gl_upcast(buffer)->Bind();
+		buffer->Bind();
 	}
 	else
 	{
@@ -161,17 +151,16 @@ void RenderInterface_GL::SetIndexBuffer(IndexBuffer* buffer)
 	}
 }
 
-ShaderProgram* RenderInterface_GL::CreateShader(const ShaderDescriptor& shaderDesc)
+ShaderProgram* Render_GL::CreateShader(const ShaderDescriptor& shaderDesc)
 {
-	return new ShaderProgram_GL(shaderDesc);
+	return new ShaderProgram(shaderDesc);
 }
 
-void RenderInterface_GL::SetShader(ShaderProgram* shader)
+void Render_GL::SetShader(ShaderProgram* shader)
 {
 	if (shader)
 	{
-		ShaderProgram_GL* shaderGL = (ShaderProgram_GL*)shader;
-		glUseProgram(shaderGL->GetHandle());
+		glUseProgram(shader->GetHandle());
 	}
 	else
 	{
@@ -179,7 +168,7 @@ void RenderInterface_GL::SetShader(ShaderProgram* shader)
 	}
 }
 
-void RenderInterface_GL::DrawArrays(PrimitiveType mode, int first, int count)
+void Render_GL::DrawArrays(PrimitiveType mode, int first, int count)
 {
 	static GLenum primitiveModes[PT_MAX] = {
 		GL_POINTS,
@@ -192,9 +181,5 @@ void RenderInterface_GL::DrawArrays(PrimitiveType mode, int first, int count)
 
 // TODO: Make this more beautiful
 
-static RenderInterface_GL s_RenderInterface_GL;
-
-RenderInterface* RenderFacade::GetRenderInterface()
-{
-	return &s_RenderInterface_GL;
-}
+static Render_GL s_Render_GL;
+Render_GL* g_render = &s_Render_GL;

@@ -1,9 +1,9 @@
 #ifndef TEXTURE2D_GL_H
 #define TEXTURE2D_GL_H
 
-#include "renderer/renderinterface_gl/renderinterface_gl.h"
+#include "renderer/render.h"
 
-class Texture2D_GL : public Texture2D
+class Texture2D_GL 
 {
 public:
 	Texture2D_GL();
@@ -16,8 +16,8 @@ public:
 
 	void Bind();
 
-	uint32_t getHandle() { return m_handle; }
-	PixelFormat GetPixelFormat() override { return m_pf; }
+	uint32_t GetHandle() { return m_handle; }
+	PixelFormat GetPixelFormat() { return m_pf; }
 
 private:
 	PixelFormat m_pf;
@@ -26,5 +26,7 @@ private:
 	int m_channels;
 	uint32_t m_handle;
 };
+
+typedef Texture2D_GL Texture2D;
 
 #endif // !TEXTURE2D_H

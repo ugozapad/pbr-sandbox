@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <string>
 #include <SDL.h>
+#include <glad/glad.h>
 
 #include "core/filemanager.h"
-#include "renderer/renderinterface.h"
+#include "renderer/render.h"
 #include "renderer/shadermanager.h"
+#include "renderer/gl/render_gl.h"
 
 ShaderProgram* ShaderManager::Create(const char* vertexFilename, const char* pixelFilename)
 {
@@ -44,6 +46,5 @@ ShaderProgram* ShaderManager::Create(const char* vertexFilename, const char* pix
 	ShaderDescriptor shaderDesc(static_cast<const void*>(vertexContent.data()), vertexContent.length(),
 		static_cast<const void*>(pixelContent.data()), pixelContent.length());
 
-	RenderInterface* renderInterface = RenderFacade::GetRenderInterface();
-	return renderInterface->CreateShader(shaderDesc);
+	return g_render->CreateShader(shaderDesc);
 }

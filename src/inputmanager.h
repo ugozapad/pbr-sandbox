@@ -7,9 +7,6 @@
 class InputManager
 {
 public:
-	static InputManager* instance;
-
-public:
 	InputManager();
 	~InputManager();
 
@@ -44,5 +41,7 @@ private:
 
 	//glm::vec2 m_accumulatedDeltaCursorPos;
 };
+
+extern InputManager* g_inputManager;
 
 #endif // !INPUTMANAGER_H
