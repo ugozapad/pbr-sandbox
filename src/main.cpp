@@ -31,11 +31,18 @@ SimpleShader::SimpleShader() :
 	m_modelViewProjectionUniform(0)
 {
 	m_shaderProgram = ShaderManager::Create("data/test.vs", "data/test.ps");
+
 	m_modelViewProjectionUniform = m_shaderProgram->GetUniformLocation("u_modelViewProjection");
+	SDL_assert(m_modelViewProjectionUniform != -1 && "Uniform u_modelViewProjection not found");
 }
 
 SimpleShader::~SimpleShader()
 {
+	if (m_shaderProgram)
+	{
+		delete m_shaderProgram;
+		m_shaderProgram = nullptr;
+	}
 }
 
 void SimpleShader::Bind(const glm::mat4& modelViewProj)
@@ -50,11 +57,36 @@ bool InitSDL()
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING ^ SDL_INIT_SENSOR) != 0)
 	{
-		printf("Failed to initialize SDL2. Error core: %s\n", SDL_GetError());
+		printf("Failed to initialize SDL2. Error code: %s\n", SDL_GetError());
 		return false;
 	}
 
 	return true;
+}
+
+bool Sys_OnSDLEvent(SDL_Event& event)
+{
+	bool exitRequested = false;
+
+	switch (event.type)
+	{
+	case SDL_QUIT:
+		exitRequested = true;
+		break;
+
+		// Input stuff
+	case SDL_KEYDOWN:
+		g_inputManager->OnKeyboardAction(event.key.keysym.sym, true);
+		break;
+	case SDL_KEYUP:
+		g_inputManager->OnKeyboardAction(event.key.keysym.sym, false);
+		break;
+	case SDL_MOUSEMOTION:
+		g_inputManager->OnMousePosAction(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
+		break;
+	}
+
+	return exitRequested;
 }
 
 int main(int argc, char* argv[])
@@ -110,23 +142,7 @@ int main(int argc, char* argv[])
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
 		{
-			switch (event.type)
-			{
-			case SDL_QUIT:
-				exitRequested = true;
-				break;
-
-			// Input stuff
-			case SDL_KEYDOWN:
-				g_inputManager->OnKeyboardAction(event.key.keysym.sym, true);
-				break;
-			case SDL_KEYUP:
-				g_inputManager->OnKeyboardAction(event.key.keysym.sym, false);
-				break;
-			case SDL_MOUSEMOTION:
-				g_inputManager->OnMousePosAction(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
-				break;
-			}
+			exitRequested = Sys_OnSDLEvent(event);
 		}
 
 		startTicks = SDL_GetTicks();
